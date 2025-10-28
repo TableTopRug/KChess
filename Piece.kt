@@ -1,4 +1,4 @@
-enum PieceType {
+enum class PieceType {
     PAWN,
     BISHOP,
     KNIGHT,
@@ -7,9 +7,9 @@ enum PieceType {
     QUEEN
 }
 
-data class Piece(var type: PieceType);
+data class Piece(var type: PieceType, val isBlack);
 
-fun Piece.value() {
+fun Piece.value(): Int {
     when(type) {
         PieceType.PAWN -> return 1;
         PieceType.BISHOP, PieceType.KNIGHT -> return 3;
