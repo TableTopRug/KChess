@@ -28,7 +28,7 @@ fun Piece.image(): BufferedImage {
         PieceType.PAWN -> if (isBlack)
                                 return ImageIO.read(this.javaClass.getResourceAsStream("/pieces/b-pawn.png"))
                             else
-                                return ImageIO.read(this.javaClass.getResourceAsStream("/pieces/b-pawn.png"))
+                                return ImageIO.read(this.javaClass.getResourceAsStream("/pieces/w-pawn.png"))
         PieceType.BISHOP -> if (isBlack)
                                 return ImageIO.read(this.javaClass.getResourceAsStream("/pieces/b-bishop.png"))
                             else

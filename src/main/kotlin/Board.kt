@@ -2,10 +2,7 @@ import java.awt.Color
 import java.awt.Container
 import java.awt.Dimension
 import java.awt.GridLayout
-import javax.swing.BorderFactory
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
+import javax.swing.*
 import kotlin.collections.HashMap
 
 
@@ -18,15 +15,15 @@ class Board(val size: Short): JPanel() {
         this.layout = GridLayout(size.toInt(), size.toInt())
         var black = true
 
-        for (x: Char in 'a' until 'a' + size.toInt()) {
+        for (y in 1.toShort().rangeTo(size)) {
             black = !black
-            for (y in 1.toShort().rangeTo(size)) {
+            for (x: Char in 'a' until 'a' + size.toInt()) {
                 val cell = Cell(y.toShort(), x)
 
                 cell.size = Dimension(16, 16)
                 cell.background = if (black) Color.BLACK else Color.WHITE
                 cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                cell.add(JLabel("$x, $y"));
+//                cell.add(JLabel("$x, $y"));
 
                 board[cell] = null;
                 this.add(cell)
@@ -69,6 +66,12 @@ class Board(val size: Short): JPanel() {
                     board[Cell(y, 'g')] = Piece(PieceType.KNIGHT, true)
                     board[Cell(y, 'h')] = Piece(PieceType.ROOK, true)
                 }
+            }
+        }
+
+        board.forEach { t, u ->
+            if (u != null) {
+                t.add(JLabel(ImageIcon(u.image())))
             }
         }
     }
