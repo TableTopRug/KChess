@@ -1,16 +1,46 @@
 package tabletoprg
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-fun main() {
-    val name = "Kotlin"
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    println("Hello, " + name + "!")
 
-    for (i in 1..5) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        println("i = $i")
-    }
+import Board
+import java.awt.BorderLayout
+import java.awt.Color
+import java.awt.Container
+import java.awt.Dimension
+import java.awt.FlowLayout
+import javax.swing.*
+import java.awt.event.ActionListener
+
+
+val frame = JFrame("My App")
+
+val lpanel = JPanel()
+val mpanel = Board(8)
+val rpanel = JPanel()
+
+
+
+fun initUI() {
+    frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+    frame.minimumSize = Dimension(400, 300)
+    frame.setLocationRelativeTo(null);
+    frame.layout = BorderLayout()
+
+    val label = JLabel("Hello, world! L")
+
+    lpanel.background = Color.RED
+    mpanel.background = Color.GREEN
+    rpanel.background = Color.BLUE
+
+    lpanel.add(label)
+    frame.add(lpanel, BorderLayout.EAST)
+    frame.add(mpanel, BorderLayout.CENTER)
+    frame.add(rpanel, BorderLayout.WEST)
+}
+
+fun main(args: Array<String>) {
+    initUI()
+
+    frame.pack()
+
+    frame.isVisible = true
 }

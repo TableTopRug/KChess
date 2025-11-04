@@ -7,7 +7,7 @@ enum class PieceType {
     QUEEN
 }
 
-data class Piece(var type: PieceType, val isBlack);
+data class Piece(var type: PieceType, val isBlack: Boolean);
 
 fun Piece.value(): Int {
     when(type) {
