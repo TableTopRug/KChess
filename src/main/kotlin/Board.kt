@@ -37,40 +37,40 @@ class Board(val size: Short): JPanel() {
         val startCol = 'a'..'h'
         val startRow = shortArrayOf(1, 2, 7, 8)
 
-//        for (y in startRow) {
-//            when (y.toInt()) {
-//                1 -> {
-//                    board.set(Cell(y, 'a'), Piece(PieceType.ROOK, false))
-//                    board.set(Cell(y, 'b'), Piece(PieceType.KNIGHT, false))
-//                    board.set(Cell(y, 'c'), Piece(PieceType.BISHOP, false))
-//                    board.set(Cell(y, 'd'), Piece(PieceType.QUEEN, false))
-//                    board.set(Cell(y, 'e'), Piece(PieceType.KING, false))
-//                    board.set(Cell(y, 'f'), Piece(PieceType.BISHOP, false))
-//                    board.set(Cell(y, 'g'), Piece(PieceType.KNIGHT, false))
-//                    board.set(Cell(y, 'h'), Piece(PieceType.ROOK, false))
-//                }
-//                2 -> {
-//                    for (x: Char in startCol) {
-//                        board.set(Cell(y, x), Piece(PieceType.PAWN, false))
-//                    }
-//                }
-//                7 -> {
-//                    for (x: Char in startCol) {
-//                        board.set(Cell(y, x), Piece(PieceType.PAWN, true))
-//                    }
-//                }
-//                8 -> {
-//                    board.set(Cell(y, 'a'), Piece(PieceType.ROOK, true))
-//                    board.set(Cell(y, 'b'), Piece(PieceType.KNIGHT, true))
-//                    board.set(Cell(y, 'c'), Piece(PieceType.BISHOP, true))
-//                    board.set(Cell(y, 'e'), Piece(PieceType.KING, true))
-//                    board.set(Cell(y, 'd'), Piece(PieceType.QUEEN, true))
-//                    board.set(Cell(y, 'f'), Piece(PieceType.BISHOP, true))
-//                    board.set(Cell(y, 'g'), Piece(PieceType.KNIGHT, true))
-//                    board.set(Cell(y, 'h'), Piece(PieceType.ROOK, true))
-//                }
-//            }
-//        }
+        for (y in startRow) {
+            when (y.toInt()) {
+                1 -> {
+                    board[Cell(y, 'a')] = Piece(PieceType.ROOK, false)
+                    board[Cell(y, 'b')] = Piece(PieceType.KNIGHT, false)
+                    board[Cell(y, 'c')] = Piece(PieceType.BISHOP, false)
+                    board[Cell(y, 'd')] = Piece(PieceType.QUEEN, false)
+                    board[Cell(y, 'e')] = Piece(PieceType.KING, false)
+                    board[Cell(y, 'f')] = Piece(PieceType.BISHOP, false)
+                    board[Cell(y, 'g')] = Piece(PieceType.KNIGHT, false)
+                    board[Cell(y, 'h')] = Piece(PieceType.ROOK, false)
+                }
+                2 -> {
+                    for (x: Char in startCol) {
+                        board[Cell(y, x)] = Piece(PieceType.PAWN, false)
+                    }
+                }
+                7 -> {
+                    for (x: Char in startCol) {
+                        board[Cell(y, x)] = Piece(PieceType.PAWN, true)
+                    }
+                }
+                8 -> {
+                    board[Cell(y, 'a')] = Piece(PieceType.ROOK, true)
+                    board[Cell(y, 'b')] = Piece(PieceType.KNIGHT, true)
+                    board[Cell(y, 'c')] = Piece(PieceType.BISHOP, true)
+                    board[Cell(y, 'e')] = Piece(PieceType.KING, true)
+                    board[Cell(y, 'd')] = Piece(PieceType.QUEEN, true)
+                    board[Cell(y, 'f')] = Piece(PieceType.BISHOP, true)
+                    board[Cell(y, 'g')] = Piece(PieceType.KNIGHT, true)
+                    board[Cell(y, 'h')] = Piece(PieceType.ROOK, true)
+                }
+            }
+        }
     }
 }
 
