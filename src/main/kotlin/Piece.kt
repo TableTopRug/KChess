@@ -11,7 +11,9 @@ enum class PieceType {
     QUEEN
 }
 
-data class Piece(var type: PieceType, val isBlack: Boolean);
+data class Piece(var type: PieceType, val isBlack: Boolean) {
+    var moves = 0;
+};
 
 fun Piece.value(): Int {
     when(type) {

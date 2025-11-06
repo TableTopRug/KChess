@@ -1,9 +1,10 @@
 import java.awt.Color
-import java.awt.Container
 import java.awt.Dimension
 import java.awt.GridLayout
+import java.awt.Image
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.*
-import kotlin.collections.HashMap
 
 
 class Board(val size: Short): JPanel() {
@@ -11,7 +12,7 @@ class Board(val size: Short): JPanel() {
     val board: HashMap<Cell, Piece?> = HashMap()
 
     init {
-        this.setSize(Dimension(128, 128));
+        this.preferredSize = Dimension(128, 128)
         this.layout = GridLayout(size.toInt(), size.toInt())
         var black = true
 
@@ -20,7 +21,7 @@ class Board(val size: Short): JPanel() {
             for (x: Char in 'a' until 'a' + size.toInt()) {
                 val cell = Cell(y.toShort(), x)
 
-                cell.size = Dimension(16, 16)
+//                cell.size = Dimension(16, 16)
                 cell.background = if (black) Color.BLACK else Color.WHITE
                 cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 //                cell.add(JLabel("$x, $y"));
@@ -71,10 +72,85 @@ class Board(val size: Short): JPanel() {
 
         board.forEach { t, u ->
             if (u != null) {
-                t.add(JLabel(ImageIcon(u.image())))
+                var iLab = JLabel(ImageIcon(u.image().getScaledInstance(t.width, t.height, Image.SCALE_SMOOTH)));
+                iLab.addMouseListener(object : MouseAdapter() {
+                    override fun mouseClicked(e: MouseEvent) {
+                        // This code executes when the JLabel is clicked
+                        println("Cell: ${t.col}${t.row}; Piece: ${if (u.isBlack) "Black" else "White"} ${u.type} :: ${t.size}")
+//                        JOptionPane.showMessageDialog(frame, "You clicked the label!")
+                        doGetMovementOptions(t, u)
+                    }
+                })
+                iLab.setBounds( 0, 0, t.width, t.height);
+                t.add(iLab, JLayeredPane.PALETTE_LAYER)
             }
         }
+
+//        this.addComponentListener(object : ComponentAdapter() {
+//            override fun componentResized(e: ComponentEvent) {
+//                for (comp: JComponent in this.)
+//                val size: Dimension = this.getSize()
+//                originalPanel.setBounds(0, 0, size.width, size.height)
+//                coverButton.setBounds(0, 0, size.width, size.height)
+//            }
+//        });
+    }
+
+    fun removeAllHighlights(cells: List<Cell>) {
+        cells.forEach{cell ->
+            cell.deHighlight()
+        }
+    }
+
+    fun doGetMovementOptions(cell: Cell, p: Piece) {
+        val posMoves = getPieceMovementOptions(cell, p)
+
+        for  (cell: Cell in posMoves) {
+            cell.highlight { removeAllHighlights(posMoves) }
+        }
+    }
+
+    fun getPieceMovementOptions(cell: Cell, p: Piece): MutableList<Cell> {
+        when(p.type) {
+            PieceType.PAWN -> {
+                var amt = if (p.moves == 0) arrayOf(1, 2) else arrayOf(1)
+                if (p.isBlack) amt.forEachIndexed { index, i -> amt[index] = -i }
+
+                val pos: MutableList<Cell> = ArrayList()
+
+                for (i: Int in amt) {
+                    val row = (cell.row + i).toShort()
+                    if (row in 1..size)
+                        pos.add(Cell(row, cell.col))
+                }
+                return pos
+            }
+            PieceType.BISHOP -> TODO()
+            PieceType.KNIGHT -> TODO()
+            PieceType.ROOK -> TODO()
+            PieceType.KING -> TODO()
+            PieceType.QUEEN -> TODO()
+        }
+    }
+
+
+}
+
+data class Cell(val row: Short, val col: Char): JLayeredPane() {
+    init {
+        this.setPreferredSize(Dimension(64, 64))
     }
 }
 
-data class Cell(val row: Short, val col: Char): JPanel()
+fun Cell.highlight(op: () -> Unit) {
+    val button = JButton()
+    button.background = Color(255, 255, 100, 96)
+    button.isOpaque = false
+    button.addActionListener { op() }
+    button.setBounds( 0, 0, this.width, this.height);
+    this.add(button, JLayeredPane.MODAL_LAYER)
+}
+
+fun Cell.deHighlight() {
+    this.remove(JLayeredPane.MODAL_LAYER)
+}
