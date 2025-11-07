@@ -10,9 +10,10 @@ import javax.swing.*
 class Board(val size: Short): JPanel() {
     val pieces: List<Piece> = mutableListOf();
     val board: HashMap<Cell, Piece?> = HashMap()
+    val highlightedCells: MutableList<Cell> = mutableListOf()
 
     init {
-        this.preferredSize = Dimension(128, 128)
+        this.preferredSize = Dimension(512, 512)
         this.layout = GridLayout(size.toInt(), size.toInt())
         var black = true
 
@@ -72,16 +73,18 @@ class Board(val size: Short): JPanel() {
 
         board.forEach { t, u ->
             if (u != null) {
-                var iLab = JLabel(ImageIcon(u.image().getScaledInstance(t.width, t.height, Image.SCALE_SMOOTH)));
+                var iLab = JLabel(ImageIcon(u.image().getScaledInstance(t.preferredSize.width, t.preferredSize.height, Image.SCALE_SMOOTH)));
+//                iLab.text = "${if (u.isBlack) "Black" else "White"}_${u.type}"
                 iLab.addMouseListener(object : MouseAdapter() {
                     override fun mouseClicked(e: MouseEvent) {
+                        removeAllHighlights(highlightedCells)
                         // This code executes when the JLabel is clicked
                         println("Cell: ${t.col}${t.row}; Piece: ${if (u.isBlack) "Black" else "White"} ${u.type} :: ${t.size}")
 //                        JOptionPane.showMessageDialog(frame, "You clicked the label!")
                         doGetMovementOptions(t, u)
                     }
                 })
-                iLab.setBounds( 0, 0, t.width, t.height);
+                iLab.setBounds(0, 0, t.preferredSize.width, t.preferredSize.height);
                 t.add(iLab, JLayeredPane.PALETTE_LAYER)
             }
         }
@@ -99,7 +102,11 @@ class Board(val size: Short): JPanel() {
     fun removeAllHighlights(cells: List<Cell>) {
         cells.forEach{cell ->
             cell.deHighlight()
+            highlightedCells.remove(cell)
         }
+
+        revalidate()
+        repaint()
     }
 
     fun doGetMovementOptions(cell: Cell, p: Piece) {
@@ -107,7 +114,11 @@ class Board(val size: Short): JPanel() {
 
         for  (cell: Cell in posMoves) {
             cell.highlight { removeAllHighlights(posMoves) }
+            highlightedCells.add(cell)
         }
+
+        revalidate()
+        repaint()
     }
 
     fun getPieceMovementOptions(cell: Cell, p: Piece): MutableList<Cell> {
@@ -120,8 +131,11 @@ class Board(val size: Short): JPanel() {
 
                 for (i: Int in amt) {
                     val row = (cell.row + i).toShort()
-                    if (row in 1..size)
-                        pos.add(Cell(row, cell.col))
+                    if (row in 1..size) {
+                        board.keys.find { it.row == row && it.col == cell.col }?.let {
+                            pos.add(it)
+                        }
+                    }
                 }
                 return pos
             }
@@ -138,19 +152,37 @@ class Board(val size: Short): JPanel() {
 
 data class Cell(val row: Short, val col: Char): JLayeredPane() {
     init {
-        this.setPreferredSize(Dimension(64, 64))
+        this.minimumSize = Dimension(16, 16)
+        this.preferredSize = Dimension(64, 64)
+
+        this.isOpaque = true
     }
 }
 
 fun Cell.highlight(op: () -> Unit) {
     val button = JButton()
+    button.size = this.preferredSize
     button.background = Color(255, 255, 100, 96)
-    button.isOpaque = false
+    button.isOpaque = true
+    button.icon = null
+    button.rolloverIcon = null
+    button.pressedIcon = null
+    button.disabledIcon = null
+    button.isDefaultCapable = false  // Disable default button appearance
+    button.isFocusPainted = false   // Disable focus painting
+    button.isRolloverEnabled = false // Disable rollover effects
     button.addActionListener { op() }
-    button.setBounds( 0, 0, this.width, this.height);
+    button.setBounds(0, 0, this.preferredSize.width, this.preferredSize.height);
     this.add(button, JLayeredPane.MODAL_LAYER)
+
+//    revalidate()
+//    repaint()
 }
 
 fun Cell.deHighlight() {
-    this.remove(JLayeredPane.MODAL_LAYER)
+    components.filter { getLayer(it) == JLayeredPane.MODAL_LAYER }
+        .forEach { remove(it) }
+
+//    revalidate()
+//    repaint()
 }
