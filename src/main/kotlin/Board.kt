@@ -108,41 +108,53 @@ class Board(val size: Short): JPanel() {
         }
     }
 
-    fun doGetMovementOptions(cell: Cell, p: Piece) {
-        val posMoves = getPieceMovementOptions(cell, p)
+    fun doGetMovementOptions(from: Cell, p: Piece) {
+        val posMoves = getPieceMovementOptions(from, p)
 
         for  (cell: Cell in posMoves) {
-            cell.highlight { removeAllHighlights(posMoves) }
+            cell.highlight {
+                doPieceMove(from, cell)
+                removeAllHighlights(posMoves)
+            }
             highlightedCells.add(cell)
         }
     }
 
-    fun getPieceMovementOptions(cell: Cell, p: Piece): MutableList<Cell> {
-        when(p.type) {
-            PieceType.PAWN -> {
-                var amt = if (p.moves == 0) arrayOf(1, 2) else arrayOf(1)
-                if (p.isBlack) amt.forEachIndexed { index, i -> amt[index] = -i }
+    fun getPieceMovementOptions(c: Cell, p: Piece): List<Cell> {
+        var positions = p.type.movement(c, p)
+        val pos = mutableListOf<Cell>()
 
-                val pos: MutableList<Cell> = ArrayList()
-
-                for (i: Int in amt) {
-                    val row = (cell.row + i).toShort()
-                    if (row in 1..size) {
-                        board.keys.find { it.row == row && it.col == cell.col }?.let {
-                            pos.add(it)
-                        }
-                    }
+        for (position in positions) {
+            if (position.first in 'a' until 'a' + size.toInt() && position.second in 1.toShort().rangeTo(size)) {
+                val cell = board.keys.find { it.col == position.first && it.row == position.second }
+                if (cell != null && p.type.validateMove(this.board, c, cell)) {
+                    pos.add(cell)
                 }
-                return pos
             }
-            PieceType.BISHOP -> TODO()
-            PieceType.KNIGHT -> TODO()
-            PieceType.ROOK -> TODO()
-            PieceType.KING -> TODO()
-            PieceType.QUEEN -> TODO()
         }
+
+        return pos
     }
 
+    fun doPieceMove(from: Cell, to: Cell) {
+        val piece = board[from]
+
+        board[to] = piece
+        board[from] = null
+
+        to.removeAll()
+        if (piece != null) {
+            var iLab = JLabel(ImageIcon(piece.image().getScaledInstance(to.preferredSize.width, to.preferredSize.height, Image.SCALE_SMOOTH)));
+            iLab.setBounds(0, 0, to.preferredSize.width, to.preferredSize.height);
+            to.add(iLab, JLayeredPane.PALETTE_LAYER)
+        }
+        from.removeAll()
+
+        to.revalidate()
+        to.repaint()
+        from.revalidate()
+        from.repaint()
+    }
 
 }
 
@@ -171,7 +183,8 @@ fun Cell.highlight(op: () -> Unit) {
     button.isRolloverEnabled = false // Disable rollover effects
     button.addActionListener { op() }
     button.setBounds(0, 0, this.preferredSize.width, this.preferredSize.height);
-    this.add(button, JLayeredPane.MODAL_LAYER)
+    this.add(button)
+    this.setLayer(button, JLayeredPane.MODAL_LAYER)
 
     revalidate()
     repaint()
@@ -182,9 +195,6 @@ fun Cell.deHighlight() {
     for (layer in getComponentsInLayer(JLayeredPane.MODAL_LAYER)) {
         remove(layer)
     }
-
-    // Clean up the layered pane
-    removeAll()
 
     // Force complete refresh
     invalidate()
