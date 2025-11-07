@@ -100,13 +100,12 @@ class Board(val size: Short): JPanel() {
     }
 
     fun removeAllHighlights(cells: List<Cell>) {
-        cells.forEach{cell ->
-            cell.deHighlight()
-            highlightedCells.remove(cell)
-        }
+        val cellsList = ArrayList(cells)
 
-        revalidate()
-        repaint()
+        cellsList.forEach{cell ->
+            highlightedCells.remove(cell)
+            cell.deHighlight()
+        }
     }
 
     fun doGetMovementOptions(cell: Cell, p: Piece) {
@@ -116,9 +115,6 @@ class Board(val size: Short): JPanel() {
             cell.highlight { removeAllHighlights(posMoves) }
             highlightedCells.add(cell)
         }
-
-        revalidate()
-        repaint()
     }
 
     fun getPieceMovementOptions(cell: Cell, p: Piece): MutableList<Cell> {
@@ -152,6 +148,7 @@ class Board(val size: Short): JPanel() {
 
 data class Cell(val row: Short, val col: Char): JLayeredPane() {
     init {
+        this.layout = null;
         this.minimumSize = Dimension(16, 16)
         this.preferredSize = Dimension(64, 64)
 
@@ -168,6 +165,7 @@ fun Cell.highlight(op: () -> Unit) {
     button.rolloverIcon = null
     button.pressedIcon = null
     button.disabledIcon = null
+    button.isContentAreaFilled = true
     button.isDefaultCapable = false  // Disable default button appearance
     button.isFocusPainted = false   // Disable focus painting
     button.isRolloverEnabled = false // Disable rollover effects
@@ -175,14 +173,21 @@ fun Cell.highlight(op: () -> Unit) {
     button.setBounds(0, 0, this.preferredSize.width, this.preferredSize.height);
     this.add(button, JLayeredPane.MODAL_LAYER)
 
-//    revalidate()
-//    repaint()
+    revalidate()
+    repaint()
 }
 
 fun Cell.deHighlight() {
-    components.filter { getLayer(it) == JLayeredPane.MODAL_LAYER }
-        .forEach { remove(it) }
+//    System.out.println("De-highlighting cell $col$row")
+    for (layer in getComponentsInLayer(JLayeredPane.MODAL_LAYER)) {
+        remove(layer)
+    }
 
-//    revalidate()
-//    repaint()
+    // Clean up the layered pane
+    removeAll()
+
+    // Force complete refresh
+    invalidate()
+    revalidate()
+    repaint()
 }
