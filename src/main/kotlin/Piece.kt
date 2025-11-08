@@ -201,18 +201,23 @@ enum class PieceType {
     };
 
     abstract fun movement(cell: Cell, p: Piece): List<Pair<Char, Short>>
+
     open fun validateMove(board: HashMap<Cell, Piece?>, from: Cell, to: Cell): Boolean {
         val dir = Pair(
             if (to.col - from.col > 1) 1 else if (to.col - from.col < 0) -1 else 0,
             if (to.row - from.row > 1) 1 else if (to.row - from.row < 0) -1 else 0
         )
 
-        var nextCell: Cell
+        // Calculate maximum steps needed
+        val maxSteps = maxOf(
+            kotlin.math.abs(to.col - from.col),
+            kotlin.math.abs(to.row - from.row)
+        )
 
-        do {
-            val nextCol = (from.col + dir.first)
-            val nextRow = (from.row + dir.second).toShort()
-            nextCell = Cell(nextRow, nextCol)
+        for (step in 1..maxSteps) {
+            val nextCol = (from.col + (dir.first * step))
+            val nextRow = (from.row + (dir.second * step)).toShort()
+            val nextCell = Cell(nextRow, nextCol)
 
             if (nextCell == to) {
                 return board[to]?.isBlack != board[from]?.isBlack
@@ -221,7 +226,7 @@ enum class PieceType {
             if (board[nextCell] != null) {
                 return false
             }
-        } while (nextCell != to)
+        }
 
         return false
     }
