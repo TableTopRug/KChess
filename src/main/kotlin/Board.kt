@@ -73,19 +73,7 @@ class Board(val size: Short): JPanel() {
 
         board.forEach { t, u ->
             if (u != null) {
-                var iLab = JLabel(ImageIcon(u.image().getScaledInstance(t.preferredSize.width, t.preferredSize.height, Image.SCALE_SMOOTH)));
-//                iLab.text = "${if (u.isBlack) "Black" else "White"}_${u.type}"
-                iLab.addMouseListener(object : MouseAdapter() {
-                    override fun mouseClicked(e: MouseEvent) {
-                        removeAllHighlights(highlightedCells)
-                        // This code executes when the JLabel is clicked
-                        println("Cell: ${t.col}${t.row}; Piece: ${if (u.isBlack) "Black" else "White"} ${u.type} :: ${t.size}")
-//                        JOptionPane.showMessageDialog(frame, "You clicked the label!")
-                        doGetMovementOptions(t, u)
-                    }
-                })
-                iLab.setBounds(0, 0, t.preferredSize.width, t.preferredSize.height);
-                t.add(iLab, JLayeredPane.PALETTE_LAYER)
+                addPieceOnClick(t, u)
             }
         }
 
@@ -97,6 +85,22 @@ class Board(val size: Short): JPanel() {
 //                coverButton.setBounds(0, 0, size.width, size.height)
 //            }
 //        });
+    }
+
+    fun addPieceOnClick(cell: Cell, piece: Piece) {
+        var iLab = JLabel(ImageIcon(piece.image().getScaledInstance(cell.preferredSize.width, cell.preferredSize.height, Image.SCALE_SMOOTH)));
+//                iLab.text = "${if (u.isBlack) "Black" else "White"}_${u.type}"
+        iLab.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                removeAllHighlights(highlightedCells)
+                // This code executes when the JLabel is clicked
+                println("Cell: ${cell.col}${cell.row}; Piece: ${if (piece.isBlack) "Black" else "White"} ${piece.type} :: ${cell.size}")
+//                        JOptionPane.showMessageDialog(frame, "You clicked the label!")
+                doGetMovementOptions(cell, piece)
+            }
+        })
+        iLab.setBounds(0, 0, cell.preferredSize.width, cell.preferredSize.height);
+        cell.add(iLab, JLayeredPane.PALETTE_LAYER)
     }
 
     fun removeAllHighlights(cells: List<Cell>) {
@@ -147,6 +151,8 @@ class Board(val size: Short): JPanel() {
             var iLab = JLabel(ImageIcon(piece.image().getScaledInstance(to.preferredSize.width, to.preferredSize.height, Image.SCALE_SMOOTH)));
             iLab.setBounds(0, 0, to.preferredSize.width, to.preferredSize.height);
             to.add(iLab, JLayeredPane.PALETTE_LAYER)
+            piece.moves++
+            addPieceOnClick(to, piece)
         }
         from.removeAll()
 
