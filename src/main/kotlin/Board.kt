@@ -16,24 +16,6 @@ abstract class Board(val size: Short): JPanel() {
     init {
         this.preferredSize = Dimension(512, 512)
         this.layout = GridLayout(size.toInt(), size.toInt())
-        var black = true
-
-        for (y in 1.toShort().rangeTo(size)) {
-            black = !black
-            for (x: Char in 'a' until 'a' + size.toInt()) {
-                val cell = Cell(y.toShort(), x)
-
-//                cell.size = Dimension(16, 16)
-                cell.background = if (black) Color.BLACK else Color.WHITE
-                cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-//                cell.add(JLabel("$x, $y"));
-
-                board[cell] = null;
-                this.add(cell)
-                black = !black
-            }
-        }
-
     }
 
     abstract fun addPieceOnClick(cell: Cell, piece: Piece)
@@ -47,13 +29,22 @@ abstract class Board(val size: Short): JPanel() {
         }
     }
 
-    fun doGetMovementOptions(from: Cell, p: Piece) {
+    fun doGetMovementOptions(from: Cell, p: Piece, game: Game? = null) {
         val posMoves = getPieceMovementOptions(from, p)
 
         for  (cell: Cell in posMoves) {
             cell.highlight {
-                doPieceMove(from, cell)
-                removeAllHighlights(posMoves)
+                if (game != null) {
+                    // Use game's makeMove to handle turn switching
+                    val currentPlayer = game.players.find { it.color == p.color }
+                    if (currentPlayer != null && game.makeMove(from, cell, currentPlayer)) {
+                        removeAllHighlights(posMoves)
+                    }
+                } else {
+                    // Fallback to direct move (for non-game usage)
+                    doPieceMove(from, cell)
+                    removeAllHighlights(posMoves)
+                }
             }
             highlightedCells.add(cell)
         }

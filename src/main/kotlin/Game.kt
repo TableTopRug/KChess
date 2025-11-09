@@ -3,15 +3,25 @@ enum class COLOR {
     WHITE
 }
 
-abstract class Game(players: List<Player>, teams: List<COLOR>) {
-    val players: List<Player> = players
-    val observers: List<Player> = mutableListOf()
-    abstract var board: Board
-}
+data class GameState(
+    val board: HashMap<Cell, Piece?>,
+    val currentTurn: COLOR,
+    val moveHistory: List<Move>
+)
 
-class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLACK)) {
-    init {
-        require(players.size % 2 == 0) { "Chess requires multiples of 2 players." }
-        this.board = ChessBoard()
-    }
+open class Move(
+    open val from: Cell,
+    open val to: Cell,
+    open val piece: Piece
+)
+
+abstract class Game(val players: List<Player>, teams: List<COLOR>) {
+    val observers: List<Player> = mutableListOf()
+
+    abstract val board: Board
+
+    // Add methods for game state observation
+    abstract fun getGameState(): GameState
+    abstract fun isValidMove(from: Cell, to: Cell, player: Player): Boolean
+    abstract fun makeMove(from: Cell, to: Cell, player: Player): Boolean
 }

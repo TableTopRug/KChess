@@ -11,6 +11,9 @@ import javax.swing.JLayeredPane
 
 
 class ChessBoard(size: Short = 8): Board(size) {
+    var game: Chess? = null
+
+
     init {
         this.preferredSize = Dimension(512, 512)
         this.layout = GridLayout(size.toInt(), size.toInt())
@@ -38,67 +41,65 @@ class ChessBoard(size: Short = 8): Board(size) {
         for (y in startRow) {
             when (y.toInt()) {
                 1 -> {
-                    board[Cell(y, 'a')] = ChessPiece(PieceType.ROOK, COLOR.WHITE)
-                    board[Cell(y, 'b')] = Piece(PieceType.KNIGHT, COLOR.WHITE)
-                    board[Cell(y, 'c')] = Piece(PieceType.BISHOP, COLOR.WHITE)
-                    board[Cell(y, 'd')] = Piece(PieceType.QUEEN, COLOR.WHITE)
-                    board[Cell(y, 'e')] = Piece(PieceType.KING, COLOR.WHITE)
-                    board[Cell(y, 'f')] = Piece(PieceType.BISHOP, COLOR.WHITE)
-                    board[Cell(y, 'g')] = Piece(PieceType.KNIGHT, COLOR.WHITE)
-                    board[Cell(y, 'h')] = Piece(PieceType.ROOK, COLOR.WHITE)
+                    board[Cell(y, 'a')] = ChessPiece(ChessPieceType.ROOK, COLOR.WHITE)
+                    board[Cell(y, 'b')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.WHITE)
+                    board[Cell(y, 'c')] = ChessPiece(ChessPieceType.BISHOP, COLOR.WHITE)
+                    board[Cell(y, 'd')] = ChessPiece(ChessPieceType.QUEEN, COLOR.WHITE)
+                    board[Cell(y, 'e')] = ChessPiece(ChessPieceType.KING, COLOR.WHITE)
+                    board[Cell(y, 'f')] = ChessPiece(ChessPieceType.BISHOP, COLOR.WHITE)
+                    board[Cell(y, 'g')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.WHITE)
+                    board[Cell(y, 'h')] = ChessPiece(ChessPieceType.ROOK, COLOR.WHITE)
                 }
                 2 -> {
                     for (x: Char in startCol) {
-                        board[Cell(y, x)] = Piece(PieceType.PAWN, COLOR.WHITE)
+                        board[Cell(y, x)] = ChessPiece(ChessPieceType.PAWN, COLOR.WHITE)
                     }
                 }
                 7 -> {
                     for (x: Char in startCol) {
-                        board[Cell(y, x)] = Piece(PieceType.PAWN, COLOR.BLACK)
+                        board[Cell(y, x)] = ChessPiece(ChessPieceType.PAWN, COLOR.BLACK)
                     }
                 }
                 8 -> {
-                    board[Cell(y, 'a')] = Piece(PieceType.ROOK, COLOR.BLACK)
-                    board[Cell(y, 'b')] = Piece(PieceType.KNIGHT, COLOR.BLACK)
-                    board[Cell(y, 'c')] = Piece(PieceType.BISHOP, COLOR.BLACK)
-                    board[Cell(y, 'e')] = Piece(PieceType.KING, COLOR.BLACK)
-                    board[Cell(y, 'd')] = Piece(PieceType.QUEEN, COLOR.BLACK)
-                    board[Cell(y, 'f')] = Piece(PieceType.BISHOP, COLOR.BLACK)
-                    board[Cell(y, 'g')] = Piece(PieceType.KNIGHT, COLOR.BLACK)
-                    board[Cell(y, 'h')] = Piece(PieceType.ROOK, COLOR.BLACK)
+                    board[Cell(y, 'a')] = ChessPiece(ChessPieceType.ROOK, COLOR.BLACK)
+                    board[Cell(y, 'b')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.BLACK)
+                    board[Cell(y, 'c')] = ChessPiece(ChessPieceType.BISHOP, COLOR.BLACK)
+                    board[Cell(y, 'e')] = ChessPiece(ChessPieceType.KING, COLOR.BLACK)
+                    board[Cell(y, 'd')] = ChessPiece(ChessPieceType.QUEEN, COLOR.BLACK)
+                    board[Cell(y, 'f')] = ChessPiece(ChessPieceType.BISHOP, COLOR.BLACK)
+                    board[Cell(y, 'g')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.BLACK)
+                    board[Cell(y, 'h')] = ChessPiece(ChessPieceType.ROOK, COLOR.BLACK)
                 }
             }
         }
 
-        board.forEach { t, u ->
+        board.forEach { (t, u) ->
             if (u != null) {
                 addPieceOnClick(t, u)
             }
         }
-
-//        this.addComponentListener(object : ComponentAdapter() {
-//            override fun componentResized(e: ComponentEvent) {
-//                for (comp: JComponent in this.)
-//                val size: Dimension = this.getSize()
-//                originalPanel.setBounds(0, 0, size.width, size.height)
-//                coverButton.setBounds(0, 0, size.width, size.height)
-//            }
-//        });
     }
 
     override fun addPieceOnClick(cell: Cell, piece: Piece) {
-        var iLab = JLabel(ImageIcon(piece.image().getScaledInstance(cell.preferredSize.width, cell.preferredSize.height, Image.SCALE_SMOOTH)));
-//                iLab.text = "${if (u.isBlack) "Black" else "White"}_${u.type}"
+        var iLab = JLabel(ImageIcon(piece.image().getScaledInstance(cell.preferredSize.width, cell.preferredSize.height, Image.SCALE_SMOOTH)))
+
         iLab.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 removeAllHighlights(highlightedCells)
-                // This code executes when the JLabel is clicked
-                println("Cell: ${cell.col}${cell.row}; Piece: $piece.color ${piece.type} :: ${cell.size}")
-//                        JOptionPane.showMessageDialog(frame, "You clicked the label!")
-                doGetMovementOptions(cell, piece)
+//                println("Cell: ${cell.col}${cell.row}; Piece: ${piece.color} ${piece.type}")
+
+                // Check if it's the correct player's turn
+                game?.let { g ->
+                    val currentPlayer = g.players.find { it.color == g.getCurrentTurn() }
+                    if (currentPlayer is HumanPlayer && piece.color == currentPlayer.color) {
+                        doGetMovementOptions(cell, piece, g)
+                    } else {
+                        println("Not your turn!")
+                    }
+                }
             }
         })
-        iLab.setBounds(0, 0, cell.preferredSize.width, cell.preferredSize.height);
+        iLab.setBounds(0, 0, cell.preferredSize.width, cell.preferredSize.height)
         cell.add(iLab, JLayeredPane.PALETTE_LAYER)
     }
 }

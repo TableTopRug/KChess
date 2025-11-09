@@ -1,16 +1,28 @@
-open class Player(val board: Board, val color: COLOR) {
+open class Player(val color: COLOR) {
     var piecesCaptured = mutableListOf<PieceType>()
+
+    // Players observe and act through the game
+    open fun takeTurn(game: Game, move: Move? = null) {
+        // Base implementation - human players use UI
+    }
 }
 
-class HumanPlayer(board: Board, color: COLOR): Player(board, color) {
-
+class HumanPlayer(color: COLOR): Player(color) {
+    // Human players interact through UI, so no automatic turn taking
 }
 
-class AIPlayer(board: Board, color: COLOR): Player(board, color) {
-    fun getPieceCells(): MutableList<Cell> {
+class AIPlayer(color: COLOR): Player(color) {
+    override fun takeTurn(game: Game, move: Move?) {
+        // AI logic here
+        val gameState = game.getGameState()
+        val pieceCells = getPieceCells(gameState.board)
+
+        TODO()
+    }
+
+    private fun getPieceCells(boardState: HashMap<Cell, Piece?>): MutableList<Cell> {
         val pieceCells = mutableListOf<Cell>()
-
-        for ((cell, piece) in this.board.getBoardState()) {
+        for ((cell, piece) in boardState) {
             if (piece != null && piece.color == color) {
                 pieceCells.add(cell)
             }
