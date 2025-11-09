@@ -1,7 +1,10 @@
 package tabletoprg
 
 
+import AIPlayer
 import Board
+import Chess
+import HumanPlayer
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Container
@@ -14,7 +17,7 @@ import java.awt.event.ActionListener
 val frame = JFrame("My App")
 
 val lpanel = JPanel()
-val mpanel = Board(8)
+val mpanel = JPanel()
 val rpanel = JPanel()
 
 
@@ -42,6 +45,13 @@ fun initUI() {
 
 fun main(args: Array<String>) {
     initUI()
+
+    val Game = Chess(
+        listOf(
+            HumanPlayer(Board(8), COLOR.WHITE),
+            AIPlayer(Board(8), COLOR.BLACK)
+        )
+    )
 
     frame.pack()
 

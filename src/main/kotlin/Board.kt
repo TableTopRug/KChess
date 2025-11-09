@@ -7,10 +7,11 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 
-class Board(val size: Short): JPanel() {
+abstract class Board(val size: Short): JPanel() {
     val pieces: List<Piece> = mutableListOf();
-    val board: HashMap<Cell, Piece?> = HashMap()
     val highlightedCells: MutableList<Cell> = mutableListOf()
+
+    internal val board: HashMap<Cell, Piece?> = HashMap()
 
     init {
         this.preferredSize = Dimension(512, 512)
@@ -33,75 +34,9 @@ class Board(val size: Short): JPanel() {
             }
         }
 
-        val startCol = 'a'..'h'
-        val startRow = shortArrayOf(1, 2, 7, 8)
-
-        for (y in startRow) {
-            when (y.toInt()) {
-                1 -> {
-                    board[Cell(y, 'a')] = Piece(PieceType.ROOK, false)
-                    board[Cell(y, 'b')] = Piece(PieceType.KNIGHT, false)
-                    board[Cell(y, 'c')] = Piece(PieceType.BISHOP, false)
-                    board[Cell(y, 'd')] = Piece(PieceType.QUEEN, false)
-                    board[Cell(y, 'e')] = Piece(PieceType.KING, false)
-                    board[Cell(y, 'f')] = Piece(PieceType.BISHOP, false)
-                    board[Cell(y, 'g')] = Piece(PieceType.KNIGHT, false)
-                    board[Cell(y, 'h')] = Piece(PieceType.ROOK, false)
-                }
-                2 -> {
-                    for (x: Char in startCol) {
-                        board[Cell(y, x)] = Piece(PieceType.PAWN, false)
-                    }
-                }
-                7 -> {
-                    for (x: Char in startCol) {
-                        board[Cell(y, x)] = Piece(PieceType.PAWN, true)
-                    }
-                }
-                8 -> {
-                    board[Cell(y, 'a')] = Piece(PieceType.ROOK, true)
-                    board[Cell(y, 'b')] = Piece(PieceType.KNIGHT, true)
-                    board[Cell(y, 'c')] = Piece(PieceType.BISHOP, true)
-                    board[Cell(y, 'e')] = Piece(PieceType.KING, true)
-                    board[Cell(y, 'd')] = Piece(PieceType.QUEEN, true)
-                    board[Cell(y, 'f')] = Piece(PieceType.BISHOP, true)
-                    board[Cell(y, 'g')] = Piece(PieceType.KNIGHT, true)
-                    board[Cell(y, 'h')] = Piece(PieceType.ROOK, true)
-                }
-            }
-        }
-
-        board.forEach { t, u ->
-            if (u != null) {
-                addPieceOnClick(t, u)
-            }
-        }
-
-//        this.addComponentListener(object : ComponentAdapter() {
-//            override fun componentResized(e: ComponentEvent) {
-//                for (comp: JComponent in this.)
-//                val size: Dimension = this.getSize()
-//                originalPanel.setBounds(0, 0, size.width, size.height)
-//                coverButton.setBounds(0, 0, size.width, size.height)
-//            }
-//        });
     }
 
-    fun addPieceOnClick(cell: Cell, piece: Piece) {
-        var iLab = JLabel(ImageIcon(piece.image().getScaledInstance(cell.preferredSize.width, cell.preferredSize.height, Image.SCALE_SMOOTH)));
-//                iLab.text = "${if (u.isBlack) "Black" else "White"}_${u.type}"
-        iLab.addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent) {
-                removeAllHighlights(highlightedCells)
-                // This code executes when the JLabel is clicked
-                println("Cell: ${cell.col}${cell.row}; Piece: ${if (piece.isBlack) "Black" else "White"} ${piece.type} :: ${cell.size}")
-//                        JOptionPane.showMessageDialog(frame, "You clicked the label!")
-                doGetMovementOptions(cell, piece)
-            }
-        })
-        iLab.setBounds(0, 0, cell.preferredSize.width, cell.preferredSize.height);
-        cell.add(iLab, JLayeredPane.PALETTE_LAYER)
-    }
+    abstract fun addPieceOnClick(cell: Cell, piece: Piece)
 
     fun removeAllHighlights(cells: List<Cell>) {
         val cellsList = ArrayList(cells)
@@ -162,7 +97,13 @@ class Board(val size: Short): JPanel() {
         from.repaint()
     }
 
+    fun getBoardState(): HashMap<Cell, Piece?> {
+        return board
+    }
+
 }
+
+
 
 data class Cell(val row: Short, val col: Char): JLayeredPane() {
     init {
