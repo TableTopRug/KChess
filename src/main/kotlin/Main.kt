@@ -1,9 +1,9 @@
 package tabletoprg
 
-
 import AIPlayer
 import Board
 import Chess
+import GameUIManager
 import HumanPlayer
 import java.awt.*
 import javax.swing.*
@@ -17,30 +17,24 @@ val mpanel = JPanel()
 val rpanel = JPanel()
 
 
-
 fun initUI() {
     frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     frame.minimumSize = Dimension(800, 600)
     frame.setLocationRelativeTo(null);
     frame.layout = BorderLayout()
 
-    lpanel.minimumSize = Dimension(256, 64)
-    rpanel.minimumSize = Dimension(256, 64)
+    // Set fixed sizes for side panels
+    lpanel.preferredSize = Dimension(200, 600)
+    lpanel.minimumSize = Dimension(50, 125)
+    lpanel.maximumSize = Dimension(400, 1200)
+
+    rpanel.preferredSize = Dimension(200, 600)
+    rpanel.minimumSize = Dimension(50, 125)
+    rpanel.maximumSize = Dimension(400, 1200)
 
     lpanel.background = Color.RED
     mpanel.background = Color.GREEN
     rpanel.background = Color.BLUE
-
-    val whiteCaps: JPanel = JPanel()
-    whiteCaps.add(JLabel("White Captured Pieces: "))
-
-    val blackCaps: JPanel = JPanel()
-    blackCaps.add(JLabel("Black Captured Pieces: "))
-
-    val splitPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT, whiteCaps, blackCaps)
-
-    lpanel.add(splitPanel)
-    rpanel.add(JLabel("Moves: "))
 
     frame.add(lpanel, BorderLayout.WEST)
     frame.add(mpanel, BorderLayout.CENTER)
@@ -63,9 +57,17 @@ fun main(args: Array<String>) {
 
     mpanel.add(game.board)
 
+    val uiManager = GameUIManager(game, rpanel, lpanel)
+
     frame.pack()
 
     frame.isVisible = true
+
+    game.addMoveListener {
+        SwingUtilities.invokeLater {
+            uiManager.updateMoves()
+        }
+    }
 
     // Start AI turn loop (in a separate thread so UI doesn't freeze)
     Thread {

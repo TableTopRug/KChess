@@ -204,14 +204,14 @@ enum class ChessPieceType: PieceType {
 
     override fun validateMove(board: HashMap<Cell, Piece?>, from: Cell, to: Cell): Boolean {
         val dir = Pair(
-            if (to.col - from.col > 1) 1 else if (to.col - from.col < 0) -1 else 0,
-            if (to.row - from.row > 1) 1 else if (to.row - from.row < 0) -1 else 0
+            if (to.col - from.col > 0) 1 else if (to.col - from.col < 0) -1 else 0,
+            if (to.row - from.row > 0) 1 else if (to.row - from.row < 0) -1 else 0
         )
 
         // Calculate maximum steps needed
         val maxSteps = maxOf(
-            kotlin.math.abs(to.col - from.col),
-            kotlin.math.abs(to.row - from.row)
+            abs(to.col - from.col),
+            abs(to.row - from.row)
         )
 
         for (step in 1..maxSteps) {

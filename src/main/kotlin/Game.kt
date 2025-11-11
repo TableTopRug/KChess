@@ -1,3 +1,5 @@
+import javax.swing.JPanel
+
 enum class COLOR {
     BLACK,
     WHITE
@@ -15,10 +17,15 @@ open class Move(
     open val piece: Piece
 )
 
-abstract class Game(val players: List<Player>, teams: List<COLOR>) {
+abstract class Game(val players: List<Player>, val teams: List<COLOR>) {
     val observers: List<Player> = mutableListOf()
 
     abstract val board: Board
+
+
+    // Return formatted move data instead of managing UI
+    abstract fun getFormattedMoveHistory(): List<String>
+    abstract fun getLastMoveDescription(): String
 
     // Add methods for game state observation
     abstract fun getGameState(): GameState

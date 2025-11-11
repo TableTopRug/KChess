@@ -135,7 +135,7 @@ fun Cell.deHighlight() {
     }
 
     // Force complete refresh
-    invalidate()
+//    invalidate()
     revalidate()
     repaint()
 }
