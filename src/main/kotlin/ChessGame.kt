@@ -79,7 +79,7 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         moveHistory.add(ChessMove(from, to, piece, capturedPiece))
 
         if (capturedPiece != null) {
-            player.piecesCaptured.add(capturedPiece.type)
+            player.piecesCaptured.add(capturedPiece)
         }
 
         notifyMoveCompleted()

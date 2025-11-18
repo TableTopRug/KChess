@@ -5,9 +5,9 @@ import java.awt.Dimension
 import javax.swing.*
 
 
-class GameUIManager(private val game: Game, private val movesPanel: JPanel, private val capturedPanel: JPanel) {
-    private val movesListModel = DefaultListModel<String>()
-    private val movesList = JList(movesListModel)
+open class GameUIManager(private val game: Game, private val movesPanel: JPanel, private val infoPanel: JPanel) {
+    internal val movesListModel = DefaultListModel<String>()
+    internal val movesList = JList(movesListModel)
 
 
     init {
@@ -15,20 +15,12 @@ class GameUIManager(private val game: Game, private val movesPanel: JPanel, priv
         movesPanel.minimumSize = Dimension(128, 256)
         movesPanel.add(JLabel("Move History"), BorderLayout.NORTH)
 
-        capturedPanel.layout = BoxLayout(capturedPanel, BoxLayout.Y_AXIS)
-        capturedPanel.minimumSize = Dimension(128, 256)
-        for (color in game.teams) {
-            val capPanel = JScrollPane()
-            capPanel.add(JLabel("${color.name} Captured Pieces: "))
-            capturedPanel.add(capPanel)
-        }
-
         val scrollPane = JScrollPane(movesList)
         movesPanel.add(scrollPane, BorderLayout.CENTER)
     }
 
 
-    fun updateMoves() {
+    open fun updateMoves() {
         movesListModel.clear()
         val moves = game.getFormattedMoveHistory()
 

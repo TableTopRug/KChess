@@ -1,5 +1,5 @@
 open class Player(val color: COLOR) {
-    var piecesCaptured = mutableListOf<PieceType>()
+    var piecesCaptured = mutableListOf<Piece>()
 
     // Players observe and act through the game
     open fun takeTurn(game: Game, move: Move? = null) {

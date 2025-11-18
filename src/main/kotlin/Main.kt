@@ -3,6 +3,7 @@ package tabletoprg
 import AIPlayer
 import Board
 import Chess
+import ChessGameUIManager
 import GameUIManager
 import HumanPlayer
 import java.awt.*
@@ -57,7 +58,7 @@ fun main(args: Array<String>) {
 
     mpanel.add(game.board)
 
-    val uiManager = GameUIManager(game, rpanel, lpanel)
+    val uiManager = ChessGameUIManager(game, rpanel, lpanel)
 
     frame.pack()
 
