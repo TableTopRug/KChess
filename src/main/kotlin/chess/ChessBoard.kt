@@ -1,3 +1,9 @@
+package chess
+
+import Board
+import COLOR
+import Cell
+import Piece
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
@@ -91,7 +97,7 @@ class ChessBoard(size: Short = 8): Board(size) {
                 // Check if it's the correct player's turn
                 game?.let { g ->
                     val currentPlayer = g.players.find { it.color == g.getCurrentTurn() }
-                    if (currentPlayer is HumanPlayer && piece.color == currentPlayer.color) {
+                    if (currentPlayer is HumanChessPlayer && piece.color == currentPlayer.color) {
                         doGetMovementOptions(cell, piece, g)
                     } else {
                         println("Not your turn!")

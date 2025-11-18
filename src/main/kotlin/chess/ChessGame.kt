@@ -1,9 +1,26 @@
+package chess
+
+import COLOR
+import Cell
+import Game
+import GameState
+import Move
+import Piece
+import Player
+
 data class ChessMove(
     override val from: Cell,
     override val to: Cell,
     override val piece: ChessPiece,
     val capturedPiece: Piece?
 ): Move(from, to, piece)
+
+data class SimulatedChessGameState(
+    val board: HashMap<Cell, Piece?>,
+    val wouldBeInCheck: Boolean,
+    val capturedPiece: Piece?,
+    val isCheckingOpponent: Boolean
+)
 
 class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLACK)) {
     override val board: ChessBoard = ChessBoard()
@@ -75,6 +92,21 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         val piece = board.getBoardState()[from] as? ChessPiece ?: return false
         val capturedPiece = board.getBoardState()[to]
 
+        // Simulate move to check if it leaves king in check
+        board.getBoardState()[to] = piece
+        board.getBoardState()[from] = null
+
+        if (isKingInCheck(player.color)) {
+            // Undo move
+            board.getBoardState()[from] = piece
+            board.getBoardState()[to] = capturedPiece
+            return false
+        }
+
+        // Undo simulation and do real move
+        board.getBoardState()[from] = piece
+        board.getBoardState()[to] = capturedPiece
+
         board.doPieceMove(from, to)
         moveHistory.add(ChessMove(from, to, piece, capturedPiece))
 
@@ -94,6 +126,71 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
 
     fun addMoveListener(listener: () -> Unit) {
         moveListeners.add(listener)
+    }
+
+    fun isKingInCheck(color: COLOR): Boolean {
+        val kingCell = board.getBoardState().entries.find {
+            it.value is ChessPiece &&
+                    (it.value as ChessPiece).pieceType == ChessPieceType.KING &&
+                    it.value?.color == color
+        }?.key ?: return false
+
+        // Check if any opponent piece can attack the king
+        for ((cell, piece) in board.getBoardState()) {
+            if (piece != null && piece.color != color) {
+                val moves = board.getPieceMovementOptions(cell, piece)
+                if (moves.contains(kingCell)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    /**
+     * Gets all cells that a piece at the given position can capture
+     * (includes empty squares for non-pawn pieces, only occupied for pawns)
+     */
+    fun getAllPotentialCaptures(fromCell: Cell): List<Cell> {
+        val piece = board.getBoardState()[fromCell] ?: return emptyList()
+        return board.getPieceMovementOptions(fromCell, piece).filter { targetCell ->
+            val targetPiece = board.getBoardState()[targetCell]
+            targetPiece != null && targetPiece.color != piece.color
+        }
+    }
+
+    /**
+     * Gets all legal moves for a piece (including non-captures)
+     */
+    fun getAllLegalMoves(fromCell: Cell): List<Cell> {
+        val piece = board.getBoardState()[fromCell] ?: return emptyList()
+        return board.getPieceMovementOptions(fromCell, piece)
+    }
+
+    fun isCheckmate(color: COLOR): Boolean {
+        if (!isKingInCheck(color)) return false
+
+        // Check if any move can get out of check
+        for ((cell, piece) in board.getBoardState()) {
+            if (piece != null && piece.color == color) {
+                val moves = board.getPieceMovementOptions(cell, piece)
+                for (move in moves) {
+                    // Simulate move
+                    val capturedPiece = board.getBoardState()[move]
+                    board.getBoardState()[move] = piece
+                    board.getBoardState()[cell] = null
+
+                    val stillInCheck = isKingInCheck(color)
+
+                    // Undo move
+                    board.getBoardState()[cell] = piece
+                    board.getBoardState()[move] = capturedPiece
+
+                    if (!stillInCheck) return false
+                }
+            }
+        }
+        return true
     }
 
     private fun notifyMoveCompleted() {

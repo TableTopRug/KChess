@@ -1,14 +1,11 @@
 package tabletoprg
 
 import AIPlayer
-import Board
-import Chess
-import ChessGameUIManager
-import GameUIManager
+import chess.Chess
+import chess.ChessGameUIManager
 import HumanPlayer
 import java.awt.*
 import javax.swing.*
-import java.awt.event.ActionListener
 
 
 val frame = JFrame("Games App")

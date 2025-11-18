@@ -1,5 +1,11 @@
-open class Player(val color: COLOR) {
+abstract class Player(val color: COLOR) {
     var piecesCaptured = mutableListOf<Piece>()
+
+    /**
+     * Simulates a move without affecting the actual board state
+     * Returns the resulting game state
+     */
+    abstract fun simulateMove(game: Game, from: Cell, to: Cell): Any?
 
     // Players observe and act through the game
     open fun takeTurn(game: Game, move: Move? = null) {
@@ -7,11 +13,7 @@ open class Player(val color: COLOR) {
     }
 }
 
-class HumanPlayer(color: COLOR): Player(color) {
-    // Human players interact through UI, so no automatic turn taking
-}
-
-class AIPlayer(color: COLOR): Player(color) {
+abstract class AIPlayer(color: COLOR): Player(color) {
     override fun takeTurn(game: Game, move: Move?) {
         // AI logic here
         val gameState = game.getGameState()

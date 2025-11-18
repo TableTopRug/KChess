@@ -1,3 +1,9 @@
+package chess
+
+import COLOR
+import Cell
+import Piece
+import PieceType
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import kotlin.math.abs
@@ -262,5 +268,9 @@ data class ChessPiece(var pieceType: ChessPieceType, override val color: COLOR):
         }
 
         return ImageIO.read(this.javaClass.getResourceAsStream(path));
+    }
+
+    fun movement(cell: Cell): List<Pair<Char, Short>> {
+        return pieceType.movement(cell, this)
     }
 }

@@ -1,9 +1,12 @@
+package chess
+
+import COLOR
+import GameUIManager
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.Image.SCALE_SMOOTH
 import javax.swing.*
-import javax.swing.border.Border
 
 
 class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel, private val capturedPanel: JPanel):
@@ -26,7 +29,7 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
             capPanel.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 
             colorContainer.add(capPanel, BorderLayout.CENTER)
-            capturedPanel.add(capPanel)
+            capturedPanel.add(colorContainer)
 
             capturePanels[color] = pPanel
         }
