@@ -13,13 +13,14 @@ enum class ChessPieceType: PieceType {
     PAWN {
         override fun movement(cell: Cell, p: Piece): List<Pair<Char, Short>> {
             val mves = mutableListOf<Pair<Char, Short>>()
+            val direction = if (p.color == COLOR.WHITE) 1 else -1
 
             if (p.moves == 0)
-                mves.add(Pair(cell.col, (cell.row + if (p.color.ordinal % 2 == 0) -2 else 2).toShort()))
+                mves.add(Pair(cell.col, (cell.row + direction * 2).toShort()))
 
-            mves.add(Pair(cell.col, (cell.row + if (p.color.ordinal % 2 == 0) -1 else 1).toShort()))
-            mves.add(Pair((cell.col + 1), (cell.row + if (p.color.ordinal % 2 == 0) -1 else 1).toShort()))
-            mves.add(Pair((cell.col - 1), (cell.row + if (p.color.ordinal % 2 == 0) -1 else 1).toShort()))
+            mves.add(Pair(cell.col, (cell.row + direction).toShort()))
+            mves.add(Pair((cell.col + 1), (cell.row + direction).toShort()))
+            mves.add(Pair((cell.col - 1), (cell.row + direction).toShort()))
 
             return mves;
         }
@@ -239,6 +240,17 @@ enum class ChessPieceType: PieceType {
 }
 
 data class ChessPiece(var pieceType: ChessPieceType, override val color: COLOR): Piece(pieceType, color) {
+    var wasPromotedFromPawn = false
+
+    constructor(piece: Piece) : this(piece.type as ChessPieceType, piece.color) {
+        this.moves = piece.moves
+    }
+
+    constructor(piece: Piece, newType: ChessPieceType) : this(newType, piece.color) {
+        this.moves = piece.moves
+        this.wasPromotedFromPawn = if (piece.type == ChessPieceType.PAWN) true else false
+    }
+
     override fun value(): Int {
         return when(pieceType) {
             ChessPieceType.PAWN -> 1;

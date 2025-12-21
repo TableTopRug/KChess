@@ -26,6 +26,7 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
     override val board: ChessBoard = ChessBoard()
     private var currentTurn: COLOR = COLOR.WHITE
     private val moveListeners = mutableListOf<() -> Unit>()
+    private var uiManager: ChessGameUIManager? = null
     val moveHistory: MutableList<ChessMove> = mutableListOf()
 
 
@@ -114,6 +115,10 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
             player.piecesCaptured.add(capturedPiece)
         }
 
+        if (isPawnAtEndOfBoard(to)) {
+            promotePawn(to)
+        }
+
         notifyMoveCompleted()
 
         // Switch turns
@@ -145,6 +150,35 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
             }
         }
         return false
+    }
+
+    fun isPawnAtEndOfBoard(cell: Cell): Boolean {
+        val piece = board.getBoardState()[cell] as? ChessPiece ?: return false
+        if (piece.pieceType != ChessPieceType.PAWN) return false
+
+        return (piece.color == COLOR.WHITE && cell.row.toInt() == 8) ||
+               (piece.color == COLOR.BLACK && cell.row.toInt() == 1)
+    }
+
+    fun promotePawn(cell: Cell): ChessPiece {
+        val piece = board.getBoardState()[cell] as? ChessPiece ?: throw IllegalArgumentException("No pawn at given cell")
+        if (piece.pieceType != ChessPieceType.PAWN) throw IllegalArgumentException("Piece at given cell is not a pawn")
+
+        val newPieceType = uiManager?.doGetPromotionChoice(piece.color)
+        val newPiece = ChessPiece(piece, newPieceType ?: ChessPieceType.QUEEN)
+
+        board.getBoardState()[cell] = newPiece
+
+        val boardCell = board.board.keys.find { it.col == cell.col && it.row == cell.row }
+
+        if (boardCell != null) {
+            boardCell.removeAll()
+            board.addPieceOnClick(boardCell, newPiece)
+            boardCell.revalidate()
+            boardCell.repaint()
+        }
+
+        return newPiece
     }
 
     /**
@@ -193,7 +227,13 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         return true
     }
 
+    fun subscribeAsUIManager(uiManager: ChessGameUIManager) {
+        this.uiManager = uiManager;
+    }
+
     private fun notifyMoveCompleted() {
         moveListeners.forEach { it() }
     }
+
+
 }

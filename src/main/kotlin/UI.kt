@@ -1,5 +1,3 @@
-import tabletoprg.lpanel
-import tabletoprg.rpanel
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
