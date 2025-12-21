@@ -2,10 +2,7 @@ package chess
 
 import COLOR
 import GameUIManager
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.FlowLayout
-import java.awt.Image
+import java.awt.*
 import java.awt.Image.SCALE_SMOOTH
 import javax.swing.*
 
@@ -36,6 +33,8 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
             capturePanels[color] = pPanel
         }
 
+        movesList.font = Font("Monospaced", Font.ROMAN_BASELINE, 14)
+
         val scrollPane = JScrollPane(movesList)
         movesPanel.add(scrollPane, BorderLayout.CENTER)
     }
@@ -49,7 +48,8 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
         for (i in moves.indices step 2) {
             val whitMove = moves[i]
             val blackMove = if (i + 1 < moves.size) moves[i + 1] else ""
-            movesListModel.addElement("$whitMove    $blackMove")
+            val space = " ".repeat(15 - whitMove.length)
+            movesListModel.addElement("$whitMove$space$blackMove")
         }
 
         capturePanels.forEach { it.component2().removeAll() }

@@ -12,8 +12,13 @@ data class ChessMove(
     override val from: Cell,
     override val to: Cell,
     override val piece: ChessPiece,
-    val capturedPiece: Piece?
-): Move(from, to, piece)
+    var capturedPiece: Piece?,
+    var promotion: ChessPieceType? = null,
+    var isPutInCheck: Boolean = false
+): Move(from, to, piece) {
+    constructor(move: Move) : this(move.from, move.to, move.piece as ChessPiece, null) {
+    }
+}
 
 data class SimulatedChessGameState(
     val board: HashMap<Cell, Piece?>,
@@ -48,7 +53,9 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
                 ChessPieceType.PAWN -> "P"
             }
             val capture = if (move.capturedPiece != null) "x" else "-"
-            val moveStr = "$piece${move.from.col}${move.from.row}$capture${move.to.col}${move.to.row}"
+            val promotion = if (move.promotion != null) "=${move.promotion.toString()[0]}" else ""
+            val check = if (move.isPutInCheck) "+" else ""
+            val moveStr = "$piece${move.from.col}${move.from.row}$capture${move.to.col}${move.to.row}$promotion$check"
 
             if (index % 2 == 0) {
                 "$moveNum. $moveStr"
@@ -64,9 +71,10 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         val lastMove = moveHistory.last()
         val color = if (lastMove.piece.color == COLOR.WHITE) "White" else "Black"
         val piece = lastMove.piece.pieceType.toString().lowercase()
-        val capture = if (lastMove.capturedPiece != null) " captures ${lastMove.capturedPiece.type}" else ""
+        val capture = if (lastMove.capturedPiece != null) " captures ${lastMove.capturedPiece!!.type}" else ""
+        val promotion = if (lastMove.promotion != null) " and promotes to ${lastMove.promotion}" else ""
 
-        return "$color $piece from ${lastMove.from.col}${lastMove.from.row} to ${lastMove.to.col}${lastMove.to.row}$capture"
+        return "$color $piece from ${lastMove.from.col}${lastMove.from.row} to ${lastMove.to.col}${lastMove.to.row}$capture$promotion"
     }
 
     override fun getGameState(): GameState {
@@ -108,17 +116,15 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         board.getBoardState()[from] = piece
         board.getBoardState()[to] = capturedPiece
 
-        board.doPieceMove(from, to)
-        moveHistory.add(ChessMove(from, to, piece, capturedPiece))
+        var move = board.doPieceMove(from, to)
+        move.isPutInCheck = isKingInCheck(if (player.color == COLOR.WHITE) COLOR.BLACK else COLOR.WHITE)
 
         if (capturedPiece != null) {
             player.piecesCaptured.add(capturedPiece)
+            move.capturedPiece = capturedPiece
         }
 
-        if (isPawnAtEndOfBoard(to)) {
-            promotePawn(to)
-        }
-
+        moveHistory.add(move)
         notifyMoveCompleted()
 
         // Switch turns
