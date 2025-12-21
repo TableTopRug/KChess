@@ -3,7 +3,7 @@ package tabletoprg
 import AIPlayer
 import chess.Chess
 import chess.ChessGameUIManager
-import HumanPlayer
+import chess.HumanChessPlayer
 import java.awt.*
 import javax.swing.*
 
@@ -44,8 +44,8 @@ fun main(args: Array<String>) {
 
     val game = Chess(
         listOf(
-            HumanPlayer(COLOR.WHITE),
-            HumanPlayer(COLOR.BLACK)
+            HumanChessPlayer(COLOR.WHITE),
+            HumanChessPlayer(COLOR.BLACK)
 //            AIPlayer(COLOR.BLACK)
         )
     )
