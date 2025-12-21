@@ -1,6 +1,3 @@
-package tabletoprg
-
-import AIPlayer
 import chess.Chess
 import chess.ChessGameUIManager
 import chess.HumanChessPlayer
@@ -66,6 +63,8 @@ fun main(args: Array<String>) {
             uiManager.updateMoves()
         }
     }
+
+    game.subscribeAsUIManager(uiManager)
 
     // Start AI turn loop (in a separate thread so UI doesn't freeze)
     Thread {

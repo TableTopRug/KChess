@@ -2,9 +2,7 @@ package chess
 
 import COLOR
 import GameUIManager
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.FlowLayout
+import java.awt.*
 import java.awt.Image.SCALE_SMOOTH
 import javax.swing.*
 
@@ -16,6 +14,7 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
     init {
         capturedPanel.layout = BoxLayout(capturedPanel, BoxLayout.Y_AXIS)
         capturedPanel.minimumSize = Dimension(128, 256)
+
         for (color in game.teams) {
             val colorContainer = JPanel()
             colorContainer.layout = BorderLayout()
@@ -34,6 +33,8 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
             capturePanels[color] = pPanel
         }
 
+        movesList.font = Font("Monospaced", Font.ROMAN_BASELINE, 14)
+
         val scrollPane = JScrollPane(movesList)
         movesPanel.add(scrollPane, BorderLayout.CENTER)
     }
@@ -47,7 +48,8 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
         for (i in moves.indices step 2) {
             val whitMove = moves[i]
             val blackMove = if (i + 1 < moves.size) moves[i + 1] else ""
-            movesListModel.addElement("$whitMove    $blackMove")
+            val space = " ".repeat(15 - whitMove.length)
+            movesListModel.addElement("$whitMove$space$blackMove")
         }
 
         capturePanels.forEach { it.component2().removeAll() }
@@ -66,5 +68,32 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
 
         // Auto-scroll to bottom
         movesList.ensureIndexIsVisible(movesListModel.size() - 1)
+    }
+
+    fun doGetPromotionChoice(color: COLOR): ChessPieceType? {
+        val options = arrayOf(
+            ImageIcon(ChessPiece(ChessPieceType.QUEEN, color).image().getScaledInstance(64, 64, Image.SCALE_SMOOTH), "Queen"),
+            ImageIcon(ChessPiece(ChessPieceType.ROOK, color).image().getScaledInstance(64, 64, Image.SCALE_SMOOTH), "Rook"),
+            ImageIcon(ChessPiece(ChessPieceType.BISHOP, color).image().getScaledInstance(64, 64, Image.SCALE_SMOOTH), "Bishop"),
+            ImageIcon(ChessPiece(ChessPieceType.KNIGHT, color).image().getScaledInstance(64, 64, Image.SCALE_SMOOTH), "Knight"),
+        )
+        val choice = JOptionPane.showOptionDialog(
+            null,
+            "Choose a piece for promotion:",
+            "Pawn Promotion",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            options,
+            options[0]
+        )
+
+        return when (choice) {
+            0 -> ChessPieceType.QUEEN
+            1 -> ChessPieceType.ROOK
+            2 -> ChessPieceType.BISHOP
+            3 -> ChessPieceType.KNIGHT
+            else -> null
+        }
     }
 }

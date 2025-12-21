@@ -108,4 +108,19 @@ class ChessBoard(size: Short = 8): Board(size) {
         iLab.setBounds(0, 0, cell.preferredSize.width, cell.preferredSize.height)
         cell.add(iLab, JLayeredPane.PALETTE_LAYER)
     }
+
+    override fun doPieceMove(from: Cell, to: Cell): ChessMove {
+        var move = super.doPieceMove(from, to)
+        var chessMove = ChessMove(move)
+
+        game?.let { g ->
+            val movingPiece = board[to] as? ChessPiece
+            if (movingPiece != null && g.isPawnAtEndOfBoard(to)) {
+                val newPiece = g.promotePawn(to)
+                chessMove.promotion = newPiece.pieceType
+            }
+        }
+
+        return chessMove
+    }
 }

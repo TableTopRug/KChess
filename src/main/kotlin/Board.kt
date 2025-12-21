@@ -66,7 +66,7 @@ abstract class Board(val size: Short): JPanel() {
         return pos
     }
 
-    fun doPieceMove(from: Cell, to: Cell) {
+    open fun doPieceMove(from: Cell, to: Cell): Move {
         val piece = board[from]
 
         board[to] = piece
@@ -86,6 +86,8 @@ abstract class Board(val size: Short): JPanel() {
         to.repaint()
         from.revalidate()
         from.repaint()
+
+        return Move(from, to, piece!!)
     }
 
     fun getBoardState(): HashMap<Cell, Piece?> {
