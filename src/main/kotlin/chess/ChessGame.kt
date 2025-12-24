@@ -117,11 +117,19 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         board.getBoardState()[to] = capturedPiece
 
         var move = board.doPieceMove(from, to)
-        move.isPutInCheck = isKingInCheck(if (player.color == COLOR.WHITE) COLOR.BLACK else COLOR.WHITE)
+        val eColor = if (player.color == COLOR.WHITE) COLOR.BLACK else COLOR.WHITE
+        val oKinginCheck = isKingInCheck(eColor)
+        move.isPutInCheck = oKinginCheck
+
+        if (oKinginCheck) {
+            val canEscape = isCheckmate(eColor)
+        }
 
         if (capturedPiece != null) {
             player.piecesCaptured.add(capturedPiece)
             move.capturedPiece = capturedPiece
+            gameOver = true
+            winner = player
         }
 
         moveHistory.add(move)

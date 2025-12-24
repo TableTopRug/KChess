@@ -68,7 +68,8 @@ fun main(args: Array<String>) {
 
     // Start AI turn loop (in a separate thread so UI doesn't freeze)
     Thread {
-        while (true) {
+        //TODO: Add ui stuff for game starting
+        while (!game.gameOver) {
             Thread.sleep(1000)  // Wait 1 second between moves
             val currentPlayer = game.players.find { it.color == game.getCurrentTurn() }
             if (currentPlayer is AIPlayer) {
@@ -77,5 +78,6 @@ fun main(args: Array<String>) {
                 }
             }
         }
+        //TODO: add ui stuff for game over
     }.start()
 }

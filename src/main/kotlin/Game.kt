@@ -22,6 +22,9 @@ abstract class Game(val players: List<Player>, val teams: List<COLOR>) {
 
     abstract val board: Board
 
+    var gameOver = false;
+    var winner: Player? = null;
+
 
     // Return formatted move data instead of managing UI
     abstract fun getFormattedMoveHistory(): List<String>
