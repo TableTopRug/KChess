@@ -12,11 +12,11 @@ data class ChessMove(
     override val from: Cell,
     override val to: Cell,
     override val piece: ChessPiece,
-    var capturedPiece: Piece?,
+    var capturedPiece: Piece? = null,
     var promotion: ChessPieceType? = null,
     var isPutInCheck: Boolean = false
 ): Move(from, to, piece) {
-    constructor(move: Move) : this(move.from, move.to, move.piece as ChessPiece, null) {
+    constructor(move: Move) : this(move.from, move.to, move.piece as ChessPiece) {
     }
 }
 
@@ -29,9 +29,12 @@ data class SimulatedChessGameState(
 
 class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLACK)) {
     override val board: ChessBoard = ChessBoard()
-    private var currentTurn: COLOR = COLOR.WHITE
+
     private val moveListeners = mutableListOf<() -> Unit>()
+
+    private var currentTurn: COLOR = COLOR.WHITE
     private var uiManager: ChessGameUIManager? = null
+
     val moveHistory: MutableList<ChessMove> = mutableListOf()
 
 
@@ -83,6 +86,10 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
             currentTurn = currentTurn,
             moveHistory = moveHistory.toList()
         )
+    }
+
+    override fun getPiecesForPlayer(player: Player): List<Piece> {
+        return board.pieces.keys.filter { p -> p.color == player.color }
     }
 
     override fun isValidMove(from: Cell, to: Cell, player: Player): Boolean {
@@ -219,9 +226,11 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         if (!isKingInCheck(color)) return false
 
         // Check if any move can get out of check
-        for ((cell, piece) in board.getBoardState()) {
-            if (piece != null && piece.color == color) {
+        for (piece in board.pieces.keys) {
+            if (piece.color == color) {
+                val cell = board.pieces[piece] ?: continue
                 val moves = board.getPieceMovementOptions(cell, piece)
+
                 for (move in moves) {
                     // Simulate move
                     val capturedPiece = board.getBoardState()[move]

@@ -8,7 +8,7 @@ import javax.swing.*
 
 
 abstract class Board(val size: Short): JPanel() {
-    val pieces: List<Piece> = mutableListOf();
+    val pieces: MutableMap<Piece, Cell> = mutableMapOf();
     val highlightedCells: MutableList<Cell> = mutableListOf()
 
     internal val board: HashMap<Cell, Piece?> = HashMap()

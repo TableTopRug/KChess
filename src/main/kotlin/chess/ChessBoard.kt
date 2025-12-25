@@ -48,33 +48,51 @@ class ChessBoard(size: Short = 8): Board(size) {
             when (y.toInt()) {
                 1 -> {
                     board[Cell(y, 'a')] = ChessPiece(ChessPieceType.ROOK, COLOR.WHITE)
+                    pieces[board[Cell(y, 'a')]!!] = Cell(y, 'a')
                     board[Cell(y, 'b')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.WHITE)
+                    pieces[board[Cell(y, 'b')]!!] = Cell(y, 'b')
                     board[Cell(y, 'c')] = ChessPiece(ChessPieceType.BISHOP, COLOR.WHITE)
+                    pieces[board[Cell(y, 'c')]!!] = Cell(y, 'c')
                     board[Cell(y, 'd')] = ChessPiece(ChessPieceType.KING, COLOR.WHITE)
+                    pieces[board[Cell(y, 'd')]!!] = Cell(y, 'd')
                     board[Cell(y, 'e')] = ChessPiece(ChessPieceType.QUEEN, COLOR.WHITE)
+                    pieces[board[Cell(y, 'e')]!!] = Cell(y, 'e')
                     board[Cell(y, 'f')] = ChessPiece(ChessPieceType.BISHOP, COLOR.WHITE)
+                    pieces[board[Cell(y, 'f')]!!] = Cell(y, 'f')
                     board[Cell(y, 'g')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.WHITE)
+                    pieces[board[Cell(y, 'g')]!!] = Cell(y, 'g')
                     board[Cell(y, 'h')] = ChessPiece(ChessPieceType.ROOK, COLOR.WHITE)
+                    pieces[board[Cell(y, 'h')]!!] = Cell(y, 'h')
                 }
                 2 -> {
                     for (x: Char in startCol) {
                         board[Cell(y, x)] = ChessPiece(ChessPieceType.PAWN, COLOR.WHITE)
+                        pieces[board[Cell(y, x)]!!] = Cell(y, x)
                     }
                 }
                 7 -> {
                     for (x: Char in startCol) {
                         board[Cell(y, x)] = ChessPiece(ChessPieceType.PAWN, COLOR.BLACK)
+                        pieces[board[Cell(y, x)]!!] = Cell(y, x)
                     }
                 }
                 8 -> {
                     board[Cell(y, 'a')] = ChessPiece(ChessPieceType.ROOK, COLOR.BLACK)
+                    pieces[board[Cell(y, 'a')]!!] = Cell(y, 'a')
                     board[Cell(y, 'b')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.BLACK)
+                    pieces[board[Cell(y, 'b')]!!] = Cell(y, 'b')
                     board[Cell(y, 'c')] = ChessPiece(ChessPieceType.BISHOP, COLOR.BLACK)
+                    pieces[board[Cell(y, 'c')]!!] = Cell(y, 'c')
                     board[Cell(y, 'e')] = ChessPiece(ChessPieceType.QUEEN, COLOR.BLACK)
+                    pieces[board[Cell(y, 'e')]!!] = Cell(y, 'e')
                     board[Cell(y, 'd')] = ChessPiece(ChessPieceType.KING, COLOR.BLACK)
+                    pieces[board[Cell(y, 'd')]!!] = Cell(y, 'd')
                     board[Cell(y, 'f')] = ChessPiece(ChessPieceType.BISHOP, COLOR.BLACK)
+                    pieces[board[Cell(y, 'f')]!!] = Cell(y, 'f')
                     board[Cell(y, 'g')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.BLACK)
+                    pieces[board[Cell(y, 'g')]!!] = Cell(y, 'g')
                     board[Cell(y, 'h')] = ChessPiece(ChessPieceType.ROOK, COLOR.BLACK)
+                    pieces[board[Cell(y, 'h')]!!] = Cell(y, 'h')
                 }
             }
         }
@@ -115,6 +133,7 @@ class ChessBoard(size: Short = 8): Board(size) {
 
         game?.let { g ->
             val movingPiece = board[to] as? ChessPiece
+            pieces[movingPiece!!] = to
             if (movingPiece != null && g.isPawnAtEndOfBoard(to)) {
                 val newPiece = g.promotePawn(to)
                 chessMove.promotion = newPiece.pieceType

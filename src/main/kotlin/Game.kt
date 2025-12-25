@@ -32,6 +32,7 @@ abstract class Game(val players: List<Player>, val teams: List<COLOR>) {
 
     // Add methods for game state observation
     abstract fun getGameState(): GameState
+    abstract fun getPiecesForPlayer(player: Player): List<Piece>
     abstract fun isValidMove(from: Cell, to: Cell, player: Player): Boolean
     abstract fun makeMove(from: Cell, to: Cell, player: Player): Boolean
 }
