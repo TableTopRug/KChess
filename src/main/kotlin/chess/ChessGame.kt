@@ -128,15 +128,16 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         val oKinginCheck = isKingInCheck(eColor)
         move.isPutInCheck = oKinginCheck
 
-        if (oKinginCheck) {
-            val canEscape = isCheckmate(eColor)
-        }
-
         if (capturedPiece != null) {
             player.piecesCaptured.add(capturedPiece)
             move.capturedPiece = capturedPiece
-            gameOver = true
-            winner = player
+        }
+
+        if (oKinginCheck) {
+            if (isCheckmate(eColor)) {
+                gameOver = true
+                winner = player
+            }
         }
 
         moveHistory.add(move)
