@@ -39,6 +39,7 @@ fun initUI() {
 fun main(args: Array<String>) {
     initUI()
 
+    val screenManager = ScreenManager(frame)
     val game = Chess(
         listOf(
             HumanChessPlayer(COLOR.WHITE),
@@ -50,7 +51,15 @@ fun main(args: Array<String>) {
     // Set game reference in board
     game.board.game = game
 
-    mpanel.add(game.board)
+
+    val mainMenuPanel = createMainMenu(screenManager)
+    val gamePanel = game.board
+    val gameOverPanel = createGameOverPanel(screenManager)
+    
+    mpanel.add(gamePanel)
+    screenManager.registerScreen(GameScreen.MAIN_MENU, mainMenuPanel)
+    screenManager.registerScreen(GameScreen.IN_GAME, gamePanel)
+    screenManager.registerScreen(GameScreen.GAME_OVER, gameOverPanel)
 
     val uiManager = ChessGameUIManager(game, rpanel, lpanel)
 
@@ -80,4 +89,12 @@ fun main(args: Array<String>) {
         }
         //TODO: add ui stuff for game over
     }.start()
+}
+
+fun createGamePanel(): JPanel {
+
+}
+
+fun createMainMenu(screenManager: ScreenManager): JPanel {
+
 }
