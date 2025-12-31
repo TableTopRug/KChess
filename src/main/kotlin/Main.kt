@@ -1,5 +1,6 @@
 import chess.Chess
 import chess.ChessGameUIManager
+import chess.ChessScreenManager
 import chess.HumanChessPlayer
 import java.awt.*
 import javax.swing.*
@@ -39,7 +40,7 @@ fun initUI() {
 fun main(args: Array<String>) {
     initUI()
 
-    val screenManager = ScreenManager(frame)
+    val screenManager = ChessScreenManager(frame)
     val game = Chess(
         listOf(
             HumanChessPlayer(COLOR.WHITE),
@@ -54,7 +55,7 @@ fun main(args: Array<String>) {
 
     val mainMenuPanel = createMainMenu(screenManager)
     val gamePanel = game.board
-    val gameOverPanel = createGameOverPanel(screenManager)
+    val gameOverPanel = screenManager.createGameOverScreen()
     
     mpanel.add(gamePanel)
     screenManager.registerScreen(GameScreen.MAIN_MENU, mainMenuPanel)
@@ -75,6 +76,7 @@ fun main(args: Array<String>) {
 
     game.subscribeAsUIManager(uiManager)
 
+    //TODO: Add check to see if its an AI player or not, and add conditional logic and proper UI registration and button handleing
     // Start AI turn loop (in a separate thread so UI doesn't freeze)
     Thread {
         //TODO: Add ui stuff for game starting
@@ -87,7 +89,7 @@ fun main(args: Array<String>) {
                 }
             }
         }
-        //TODO: add ui stuff for game over
+        screenManager.prepareScreen(GameScreen.GAME_OVER, game.winner)
     }.start()
 }
 
