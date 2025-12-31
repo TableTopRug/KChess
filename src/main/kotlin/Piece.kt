@@ -5,7 +5,7 @@ import kotlin.math.abs
 /**
  * Interface defining the movement and validation behavior for different piece types.
  *
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 interface PieceType {
@@ -38,7 +38,7 @@ interface PieceType {
  * @property type The type of piece determining its movement rules
  * @property color The color/owner of the piece
  * @property moves The number of times this piece has moved
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 abstract class Piece(open var type: PieceType, open val color: COLOR) {

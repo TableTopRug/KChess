@@ -21,7 +21,7 @@ import javax.swing.JLayeredPane
  *
  * @property size The size of the board (always 8 for chess)
  * @property game Optional reference to the Chess game instance
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 class ChessBoard(size: Short = 8): Board(size) {

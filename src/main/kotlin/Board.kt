@@ -11,7 +11,7 @@ import javax.swing.*
  * Provides core functionality for managing board state, pieces, and piece movements.
  *
  * @property size The size of the board (e.g., 8 for chess)
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 abstract class Board(val size: Short): JPanel() {
@@ -154,7 +154,7 @@ abstract class Board(val size: Short): JPanel() {
  *
  * @property row The row coordinate of the cell
  * @property col The column coordinate of the cell
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 data class Cell(val row: Short, val col: Char): JLayeredPane() {

@@ -14,7 +14,7 @@ import javax.swing.*
  * @property movesPanel The panel for displaying move history
  * @property capturedPanel The panel for displaying captured pieces
  * @property capturePanels Map of color to their captured pieces panel
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel, private val capturedPanel: JPanel):

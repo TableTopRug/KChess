@@ -10,7 +10,7 @@ import javax.swing.JPanel
  * @property IN_GAME The active game screen
  * @property GAME_OVER The game over/results screen
  * @property SETTINGS The settings/options screen
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 enum class GameScreen {
@@ -28,7 +28,7 @@ enum class GameScreen {
  * @property frame The main application JFrame
  * @property currentScreen The currently displayed screen type
  * @property screens Map of registered screens
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 open class ScreenManager(private val frame: JFrame) {

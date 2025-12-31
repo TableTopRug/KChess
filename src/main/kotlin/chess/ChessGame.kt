@@ -18,7 +18,7 @@ import Player
  * @property capturedPiece The piece captured by this move (if any)
  * @property promotion The piece type the pawn was promoted to (if applicable)
  * @property isPutInCheck Whether this move puts the opponent in check
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 data class ChessMove(
@@ -41,7 +41,7 @@ data class ChessMove(
  * @property wouldBeInCheck Whether the moving player would be in check
  * @property capturedPiece The piece that would be captured (if any)
  * @property isCheckingOpponent Whether the move would put the opponent in check
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 data class SimulatedChessGameState(
@@ -59,7 +59,7 @@ data class SimulatedChessGameState(
  * @property board The chess board instance
  * @property moveHistory Complete history of all moves made
  * @property currentTurn The color of the player whose turn it is
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLACK)) {

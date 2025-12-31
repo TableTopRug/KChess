@@ -18,7 +18,7 @@ import kotlin.math.abs
  * @property ROOK Chess rook piece - moves horizontally/vertically any distance
  * @property KING Chess king piece - moves one square in any direction
  * @property QUEEN Chess queen piece - combines rook and bishop movement
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 enum class ChessPieceType: PieceType {
@@ -258,7 +258,7 @@ enum class ChessPieceType: PieceType {
  * @property pieceType The type of chess piece (pawn, rook, knight, etc.)
  * @property color The color of the piece (white or black)
  * @property wasPromotedFromPawn Flag indicating if this piece was created via pawn promotion
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 data class ChessPiece(var pieceType: ChessPieceType, override val color: COLOR): Piece(pieceType, color) {

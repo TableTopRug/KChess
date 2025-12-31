@@ -11,7 +11,7 @@ import javax.swing.*
  * @property infoPanel The panel for displaying game information
  * @property movesListModel The model for the moves list
  * @property movesList The JList component displaying moves
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 open class GameUIManager(private val game: Game, private val movesPanel: JPanel, private val infoPanel: JPanel) {

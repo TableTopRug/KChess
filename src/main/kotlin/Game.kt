@@ -5,7 +5,7 @@ import javax.swing.JPanel
  *
  * @property BLACK Represents black pieces/player
  * @property WHITE Represents white pieces/player
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 enum class COLOR {
@@ -19,7 +19,7 @@ enum class COLOR {
  * @property board The current board state mapping cells to pieces
  * @property currentTurn The color of the player whose turn it is
  * @property moveHistory The list of all moves made so far
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 data class GameState(
@@ -34,7 +34,7 @@ data class GameState(
  * @property from The source cell
  * @property to The destination cell
  * @property piece The piece that was moved
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 open class Move(
@@ -53,7 +53,7 @@ open class Move(
  * @property board The game board (must be implemented by subclasses)
  * @property gameOver Flag indicating if the game has ended
  * @property winner The winning player (if game is over)
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 abstract class Game(val players: List<Player>, val teams: List<COLOR>) {

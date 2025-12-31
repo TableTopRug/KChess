@@ -4,7 +4,7 @@
  *
  * @property color The color/team of the player
  * @property piecesCaptured List of opponent pieces captured by this player
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 abstract class Player(val color: COLOR) {
@@ -37,7 +37,7 @@ abstract class Player(val color: COLOR) {
  * Extends Player to provide additional AI-specific functionality.
  *
  * @property color The color/team of the AI player
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 abstract class AIPlayer(color: COLOR): Player(color) {

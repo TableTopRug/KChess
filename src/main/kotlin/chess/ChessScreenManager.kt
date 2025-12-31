@@ -13,7 +13,7 @@ import javax.swing.*
  * @property frame The main application frame
  * @property gameOverScreen The game over overlay panel
  * @property isGameOverPrepared Flag indicating if the game over screen is prepared
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {

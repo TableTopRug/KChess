@@ -11,7 +11,7 @@ import Player
  * Provides common chess-specific functionality like move simulation.
  *
  * @property color The color of the player (white or black)
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 open class ChessPlayer(color: COLOR): Player(color) {
@@ -49,7 +49,7 @@ open class ChessPlayer(color: COLOR): Player(color) {
  * Moves are made through the UI by clicking on pieces and destination squares.
  *
  * @property color The color of the player
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 class HumanChessPlayer(color: COLOR): ChessPlayer(color) {
@@ -60,7 +60,7 @@ class HumanChessPlayer(color: COLOR): ChessPlayer(color) {
  * Provides abstract methods that AI implementations must override for strategy.
  *
  * @property color The color of the AI player
- * @author Your Name
+ * @author TableTopRug
  * @version 1.0
  */
 abstract class AIChessPlayer(color: COLOR): ChessPlayer(color) {
