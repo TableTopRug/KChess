@@ -13,7 +13,7 @@ enum class GameScreen {
 
 open class ScreenManager(private val frame: JFrame) {
     private var currentScreen: GameScreen = GameScreen.MAIN_MENU
-    private val root = frame.contentPane as JLayeredPane
+//    private val root = frame.contentPane as JLayeredPane
     private val screens: MutableMap<GameScreen, JPanel> = mutableMapOf()
 
 
@@ -31,7 +31,7 @@ open class ScreenManager(private val frame: JFrame) {
         frame.contentPane.removeAll()
 
         screens[screenType]?.let {
-            root.add(it, java.awt.BorderLayout.CENTER)
+            frame.contentPane.add(it, java.awt.BorderLayout.CENTER)
         }
 
         frame.revalidate()

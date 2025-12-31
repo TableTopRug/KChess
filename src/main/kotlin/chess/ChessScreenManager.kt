@@ -11,6 +11,8 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
     val gameOverScreen: JPanel
     var isGameOverPrepared: Boolean = false
 
+    private var gbc = GridBagConstraints()
+
 
     init {
         gameOverScreen = createGameOverScreen()
@@ -52,7 +54,6 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
         overlay.background = Color(0, 0, 0, 180)  // Semi-transparent black
         overlay.bounds = frame.bounds
 
-        val gbc = GridBagConstraints()
         gbc.gridx = 0
         gbc.insets = Insets(10, 10, 10, 10)
 
@@ -73,7 +74,9 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
         val label = JLabel("${winner.name} Wins!")
         label.font = Font("Arial", Font.BOLD, 32)
         label.foreground = Color.WHITE
-        gameOverScreen.add(label, gameOverScreen)
+
+        gbc.gridy = 0
+        gameOverScreen.add(label, gbc)
 
         isGameOverPrepared = true
     }
