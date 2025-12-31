@@ -1,76 +1,22 @@
-# KChess - Developer Quick Reference
+# Developer Guide
 
-## Project Structure
-
-```
-src/main/kotlin/
-├── Board.kt              # Core board and cell classes
-├── Game.kt              # Game state and base game class
-├── Main.kt              # Application entry point
-├── Piece.kt             # Piece type and piece base class
-├── Player.kt            # Player and AI player classes
-├── Screen.kt            # Screen management system
-├── UI.kt                # Base UI manager
-└── chess/               # Chess-specific implementation
-    ├── ChessBoard.kt        # 8x8 chess board
-    ├── ChessGame.kt         # Chess game logic
-    ├── ChessPiece.kt        # Chess pieces and types
-    ├── ChessPlayer.kt       # Chess player types
-    ├── ChessGameUiManager.kt # Chess UI
-    └── ChessScreenManager.kt # Chess screen management
-```
-
-## Key Classes and Their Responsibilities
-
-### Game Engine (Core)
-
-| Class | Responsibility |
-|-------|-----------------|
-| `Board` | Manages pieces, validates moves, handles highlighting |
-| `Cell` | Represents a single board square with UI rendering |
-| `Game` | Manages game state, turns, and move history |
-| `Piece` | Base for all game pieces with movement rules |
-| `Player` | Represents players (human or AI) |
-
-### Chess Implementation
-
-| Class | Responsibility |
-|-------|-----------------|
-| `Chess` | Chess-specific game logic (check, checkmate, promotion) |
-| `ChessBoard` | 8x8 board with chess piece setup |
-| `ChessPiece` | Chess pieces with evaluation |
-| `ChessPieceType` | Movement rules for each piece type |
-| `ChessPlayer` | Chess player base class |
-| `HumanChessPlayer` | Human player (UI-controlled) |
-| `AIChessPlayer` | Abstract AI player base |
-
-### UI and Display
-
-| Class | Responsibility |
-|-------|-----------------|
-| `ScreenManager` | Screen navigation and layout |
-| `GameScreen` | Screen type enumeration |
-| `GameUIManager` | Base UI manager for move display |
-| `ChessGameUIManager` | Chess-specific UI (promotion dialog) |
-| `ChessScreenManager` | Chess screen management (game over) |
-
-## Common Operations
+## Common Tasks
 
 ### Making a Move
 
 ```kotlin
-// Through UI
-board.doGetMovementOptions(fromCell, piece, game)
-// When highlighted cell is clicked, move is made
+val from = board.board.keys.find { it.col == 'e' && it.row == 2.toShort() }!!
+val to = board.board.keys.find { it.col == 'e' && it.row == 4.toShort() }!!
+val player = game.players.find { it.color == COLOR.WHITE }!!
 
-// Programmatically
-game.makeMove(fromCell, toCell, player)
+if (game.makeMove(from, to, player)) {
+    println("Move successful!")
+}
 ```
 
 ### Checking Game State
 
 ```kotlin
-val state = game.getGameState()
 val currentTurn = game.getCurrentTurn()
 val isValid = game.isValidMove(from, to, player)
 val pieces = game.getPiecesForPlayer(player)
@@ -89,9 +35,6 @@ if (chess.isCheckmate(COLOR.BLACK)) { }
 if (chess.isPawnAtEndOfBoard(cell)) {
     val newPiece = chess.promotePawn(cell)
 }
-
-// Piece evaluation
-val value = piece.value() // Returns material value
 ```
 
 ### Highlighting Moves
@@ -99,124 +42,105 @@ val value = piece.value() // Returns material value
 ```kotlin
 // Highlight a cell
 cell.highlight {
-    // Action when highlighted cell is clicked
+    // Action when clicked
 }
 
 // Remove highlight
 cell.deHighlight()
 
-// Remove all highlights for a piece's moves
+// Remove all highlights
 board.removeAllHighlights(highlightedCells)
 ```
 
-## Interfaces
+## Architecture
 
-### PieceType
-Implemented by `ChessPieceType` enum. Defines:
-- `movement()`: Calculate possible moves
-- `validateMove()`: Validate a specific move
-
-## Data Classes
+### Game Engine (Core)
 
 | Class | Purpose |
 |-------|---------|
-| `GameState` | Snapshot of game at a point in time |
-| `Move` | Base move representation |
-| `ChessMove` | Chess move with promotion, capture info |
-| `SimulatedChessGameState` | Hypothetical game state after a move |
+| `Board` | Manages pieces and movement |
+| `Cell` | Represents a board square |
+| `Game` | Game state and turn management |
+| `Piece` | Base piece class |
+| `Player` | Human and AI players |
 
-## Enumerations
+### Chess Implementation
 
-| Enum | Values |
-|------|--------|
-| `COLOR` | BLACK, WHITE |
-| `GameScreen` | MAIN_MENU, GAME_SELECT, IN_GAME, GAME_OVER, SETTINGS |
-| `ChessPieceType` | PAWN, BISHOP, KNIGHT, ROOK, KING, QUEEN |
+| Class | Purpose |
+|-------|---------|
+| `Chess` | Chess game logic |
+| `ChessBoard` | 8x8 board setup |
+| `ChessPiece` | Chess piece definitions |
+| `ChessPlayer` | Chess player types |
+| `ChessGameUIManager` | Chess UI |
+| `ChessScreenManager` | Screen management |
 
-## Extension Functions
+## Key Concepts
 
-### Cell Extensions
-- `Cell.highlight(op: () -> Unit)`: Highlights cell and attaches click listener
-- `Cell.deHighlight()`: Removes highlight from cell
-
-## Important Notes
+### Board Coordinates
+- Columns: 'a' to 'h' (left to right)
+- Rows: 1 to 8 (bottom to top)
+- Cell: Column + Row (e.g., "e4", "d7")
 
 ### Turn Management
-- White moves first (typically)
+- WHITE moves first
+- Alternates after each successful move
 - `getCurrentTurn()` returns whose turn it is
-- Moves automatically switch turns when validated
-- AI player check in main loop: `currentPlayer is AIPlayer`
 
-### Move Validation
-- Moves are validated before execution
-- King-in-check moves are rejected automatically
-- Piece-specific rules are enforced (pawn captures diagonal, etc.)
-- Board obstacles block sliding pieces
+### Check/Checkmate
+- Check: King is under attack
+- Checkmate: Checked with no legal moves
+- Detected after opponent's move
 
-### Pawn Promotion
-- Occurs when pawn reaches row 8 (white) or row 1 (black)
-- `isPawnAtEndOfBoard()` checks for promotion
-- `promotePawn()` shows dialog and replaces piece
-- Promotion is tracked: `wasPromotedFromPawn`
+## Debugging
 
-### Material Evaluation
-- Pawn = 1 point
-- Bishop/Knight = 3 points
-- Rook = 5 points
-- Queen = 9 points
-- King = MAX_VALUE (irreplaceable)
+```kotlin
+// Show board state
+game.board.getBoardState().forEach { (cell, piece) ->
+    if (piece != null) {
+        println("${cell.col}${cell.row}: ${piece.type} (${piece.color})")
+    }
+}
 
-## Extending the System
+// Check highlighted cells
+println("Highlighted cells: ${game.board.highlightedCells.size}")
 
-### Adding a New Piece Type
-1. Add to `ChessPieceType` enum
-2. Implement `movement()` and `validateMove()`
-3. Add image file: `src/main/resources/pieces/[w|b]-[type].png`
-4. Update `ChessPiece.image()` if needed
+// Check piece count
+val whitePieces = game.getPiecesForPlayer(game.players.first())
+println("White pieces: ${whitePieces.size}")
+```
 
-### Adding an AI Strategy
-1. Extend `AIChessPlayer`
-2. Implement abstract methods:
-   - `takeTurn()`: Main AI decision
-   - `evaluateBoard()`: Evaluate position
-   - `evaluateMove()`: Score a move
-   - `selectMoveWithPolicy()`: Choose best move
-3. Register in main game loop
+## Building & Running
 
-### Adding a New Screen
-1. Create JPanel
-2. Register with ScreenManager: `registerScreen(GameScreen.NEW_SCREEN, panel)`
-3. Switch to: `screenManager.switchTo(GameScreen.NEW_SCREEN)`
+```bash
+# Build
+./gradlew build
 
-## Debugging Tips
+# Run
+./gradlew run
+# or
+java -jar build/libs/KChess-1.0-SNAPSHOT.jar
+```
 
-### Piece Movement Issues
-- Check `ChessPieceType.validateMove()` for piece-specific rules
-- Verify board bounds in `getPieceMovementOptions()`
-- Check obstacle detection in sliding pieces
+## IDE Integration
 
-### Highlighting Issues
-- Ensure `Cell.highlight()` is called with valid lambda
-- Verify `Cell.deHighlight()` removes all layers
-- Check `highlightedCells` list is properly maintained
+**IntelliJ IDEA / Android Studio:**
+- Hover over any class/method to see documentation
+- Press `Ctrl+Q` for full documentation
+- Type `Ctrl+Space` for autocomplete
 
-### UI/Display Issues
-- Check `Cell.preferredSize` is set (default 64x64)
-- Verify image scaling: `Image.SCALE_SMOOTH`
-- Ensure JLayeredPane layers are correct (PALETTE_LAYER for pieces, MODAL_LAYER for highlights)
+**VS Code:**
+- Hover for documentation popup
+- Go to definition to see comments
 
-### Turn/Move Issues
-- Verify `makeMove()` returns true for successful moves
-- Check player color matches current turn
-- Ensure game is not `gameOver`
+## Common Issues
 
-## Performance Considerations
+| Issue | Solution |
+|-------|----------|
+| Move not working | Check turn: `getCurrentTurn()` |
+| Highlight not showing | Verify `Cell.preferredSize` is set |
+| King moves into check | `isKingInCheck()` not called properly |
+| Pawn not promoting | Check `isPawnAtEndOfBoard()` |
 
-- Move calculation happens on demand (not pre-calculated)
-- Board state is mutable (changes during moves)
-- Highlighted cells list can grow/shrink with interactions
-- UI updates through Swing EDT (consider threading for AI)
-
----
-**Last Updated**: December 30, 2025
+See [API_REFERENCE.md](API_REFERENCE.md) for complete class documentation.
 
