@@ -8,7 +8,19 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import kotlin.math.abs
 
-
+/**
+ * Enum of all chess piece types.
+ * Each type defines its own movement rules and validation logic.
+ *
+ * @property PAWN Chess pawn piece - moves forward, captures diagonally
+ * @property BISHOP Chess bishop piece - moves diagonally any distance
+ * @property KNIGHT Chess knight piece - moves in L-shape pattern
+ * @property ROOK Chess rook piece - moves horizontally/vertically any distance
+ * @property KING Chess king piece - moves one square in any direction
+ * @property QUEEN Chess queen piece - combines rook and bishop movement
+ * @author Your Name
+ * @version 1.0
+ */
 enum class ChessPieceType: PieceType {
     PAWN {
         override fun movement(cell: Cell, p: Piece): List<Pair<Char, Short>> {
@@ -239,18 +251,46 @@ enum class ChessPieceType: PieceType {
     }
 }
 
+/**
+ * Represents a single chess piece.
+ * Contains type, color, and move history. Supports pawn promotion tracking.
+ *
+ * @property pieceType The type of chess piece (pawn, rook, knight, etc.)
+ * @property color The color of the piece (white or black)
+ * @property wasPromotedFromPawn Flag indicating if this piece was created via pawn promotion
+ * @author Your Name
+ * @version 1.0
+ */
 data class ChessPiece(var pieceType: ChessPieceType, override val color: COLOR): Piece(pieceType, color) {
+    /** Flag indicating whether this piece was promoted from a pawn */
     var wasPromotedFromPawn = false
 
+    /**
+     * Constructs a ChessPiece by copying properties from a generic Piece.
+     *
+     * @param piece The piece to copy from
+     */
     constructor(piece: Piece) : this(piece.type as ChessPieceType, piece.color) {
         this.moves = piece.moves
     }
 
+    /**
+     * Constructs a ChessPiece from another piece with a new type (for pawn promotion).
+     *
+     * @param piece The piece to copy from
+     * @param newType The new piece type to assign
+     */
     constructor(piece: Piece, newType: ChessPieceType) : this(newType, piece.color) {
         this.moves = piece.moves
         this.wasPromotedFromPawn = if (piece.type == ChessPieceType.PAWN) true else false
     }
 
+    /**
+     * Gets the point value of this piece for material balance evaluation.
+     * Used by AI and evaluation functions.
+     *
+     * @return The material value: Pawn=1, Bishop/Knight=3, Rook=5, Queen=9, King=MAX
+     */
     override fun value(): Int {
         return when(pieceType) {
             ChessPieceType.PAWN -> 1;
@@ -261,6 +301,13 @@ data class ChessPiece(var pieceType: ChessPieceType, override val color: COLOR):
         }
     }
 
+    /**
+     * Gets the image resource for displaying this piece on the board.
+     * Loads the appropriate PNG image based on piece color and type.
+     *
+     * @return BufferedImage of the chess piece
+     * @throws Exception if the image resource cannot be found
+     */
     override fun image(): BufferedImage {
         var path: String = "/pieces/"
 
@@ -282,6 +329,13 @@ data class ChessPiece(var pieceType: ChessPieceType, override val color: COLOR):
         return ImageIO.read(this.javaClass.getResourceAsStream(path));
     }
 
+    /**
+     * Gets the possible movement coordinates for this piece.
+     * Delegates to the piece type's movement calculation.
+     *
+     * @param cell The current cell of the piece
+     * @return List of possible coordinate pairs (column, row)
+     */
     fun movement(cell: Cell): List<Pair<Char, Short>> {
         return pieceType.movement(cell, this)
     }

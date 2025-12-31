@@ -6,9 +6,21 @@ import ScreenManager
 import java.awt.*
 import javax.swing.*
 
-
+/**
+ * Chess-specific screen manager.
+ * Handles chess game screens including the game over screen with winner display.
+ *
+ * @property frame The main application frame
+ * @property gameOverScreen The game over overlay panel
+ * @property isGameOverPrepared Flag indicating if the game over screen is prepared
+ * @author Your Name
+ * @version 1.0
+ */
 class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
+    /** The game over screen panel */
     val gameOverScreen: JPanel
+
+    /** Flag indicating if the game over screen has been prepared with a winner */
     var isGameOverPrepared: Boolean = false
 
     private var gbc = GridBagConstraints()
@@ -18,7 +30,14 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
         gameOverScreen = createGameOverScreen()
     }
 
-
+    /**
+     * Prepares a screen before displaying it.
+     * For game over screen, requires a COLOR argument representing the winner.
+     *
+     * @param screenType The type of screen to prepare
+     * @param args For GAME_OVER: [0] must be the winning COLOR
+     * @throws IllegalArgumentException if GAME_OVER is prepared without a COLOR argument
+     */
     override fun prepareScreen(screenType: GameScreen, vararg args: Any?) {
         when(screenType) {
             GameScreen.GAME_OVER -> {
@@ -33,6 +52,13 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
         }
     }
 
+    /**
+     * Switches to the specified screen.
+     * For game over screen, displays as an overlay with semi-transparent background.
+     *
+     * @param screenType The type of screen to switch to
+     * @throws IllegalStateException if GAME_OVER screen is not prepared
+     */
     override fun switchTo(screenType: GameScreen) {
         when (screenType) {
             GameScreen.GAME_OVER -> {
@@ -49,6 +75,12 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
         }
     }
 
+    /**
+     * Creates the game over screen panel with semi-transparent overlay.
+     * Includes buttons for navigation and win/loss display.
+     *
+     * @return JPanel representing the game over screen
+     */
     fun createGameOverScreen(): JPanel {
         val overlay = JPanel(GridBagLayout())
         overlay.background = Color(0, 0, 0, 180)  // Semi-transparent black
@@ -70,6 +102,12 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
         return overlay
     }
 
+    /**
+     * Prepares the game over screen by displaying the winner name.
+     * Must be called before switching to the GAME_OVER screen.
+     *
+     * @param winner The color of the winning player
+     */
     fun prepareGameOverScreen(winner: COLOR) {
         val label = JLabel("${winner.name} Wins!")
         label.font = Font("Arial", Font.BOLD, 32)
@@ -81,6 +119,10 @@ class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
         isGameOverPrepared = true
     }
 
+    /**
+     * Resets the screen manager to initial state.
+     * Clears the game over screen and resets preparation flag.
+     */
     override fun reset() {
         isGameOverPrepared = false
         gameOverScreen.removeAll()

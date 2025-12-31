@@ -6,11 +6,22 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-
+/**
+ * Abstract base class for game boards.
+ * Provides core functionality for managing board state, pieces, and piece movements.
+ *
+ * @property size The size of the board (e.g., 8 for chess)
+ * @author Your Name
+ * @version 1.0
+ */
 abstract class Board(val size: Short): JPanel() {
+    /** Mapping of pieces to their current cell locations */
     val pieces: MutableMap<Piece, Cell> = mutableMapOf();
+
+    /** List of cells currently highlighted for valid moves */
     val highlightedCells: MutableList<Cell> = mutableListOf()
 
+    /** Internal representation of the board state: Cell -> Piece (or null) */
     internal val board: HashMap<Cell, Piece?> = HashMap()
 
     init {
@@ -18,8 +29,20 @@ abstract class Board(val size: Short): JPanel() {
         this.layout = GridLayout(size.toInt(), size.toInt())
     }
 
+    /**
+     * Abstract method for handling piece click events on a cell.
+     * Implementation-specific for different game types.
+     *
+     * @param cell The cell that was clicked
+     * @param piece The piece on the cell
+     */
     abstract fun addPieceOnClick(cell: Cell, piece: Piece)
 
+    /**
+     * Removes all highlights from the given cells and clears the highlight list.
+     *
+     * @param cells List of cells to remove highlights from
+     */
     fun removeAllHighlights(cells: List<Cell>) {
         val cellsList = ArrayList(cells)
 
@@ -29,6 +52,14 @@ abstract class Board(val size: Short): JPanel() {
         }
     }
 
+    /**
+     * Calculates and displays all valid movement options for a piece.
+     * Highlights valid target cells and sets up click handlers for moves.
+     *
+     * @param from The source cell
+     * @param p The piece being moved
+     * @param game Optional game reference for handling turn-based moves
+     */
     fun doGetMovementOptions(from: Cell, p: Piece, game: Game? = null) {
         val posMoves = getPieceMovementOptions(from, p)
 
@@ -50,6 +81,14 @@ abstract class Board(val size: Short): JPanel() {
         }
     }
 
+    /**
+     * Gets all possible movement options for a piece at a given cell.
+     * Filters out-of-bounds moves and applies piece-specific movement validation.
+     *
+     * @param c The cell the piece is on
+     * @param p The piece to get movement options for
+     * @return List of valid target cells
+     */
     fun getPieceMovementOptions(c: Cell, p: Piece): List<Cell> {
         var positions = p.type.movement(c, p)
         val pos = mutableListOf<Cell>()
@@ -66,6 +105,14 @@ abstract class Board(val size: Short): JPanel() {
         return pos
     }
 
+    /**
+     * Executes a piece movement from one cell to another.
+     * Updates the board state and refreshes the UI.
+     *
+     * @param from The source cell
+     * @param to The destination cell
+     * @return The move that was executed
+     */
     open fun doPieceMove(from: Cell, to: Cell): Move {
         val piece = board[from]
 
@@ -90,15 +137,28 @@ abstract class Board(val size: Short): JPanel() {
         return Move(from, to, piece!!)
     }
 
+    /**
+     * Gets the current board state.
+     *
+     * @return HashMap of cell to piece mappings
+     */
     fun getBoardState(): HashMap<Cell, Piece?> {
         return board
     }
 
 }
 
-
-
+/**
+ * Represents a single cell on the game board.
+ * Extends JLayeredPane to support layering of visual elements (piece images, highlights).
+ *
+ * @property row The row coordinate of the cell
+ * @property col The column coordinate of the cell
+ * @author Your Name
+ * @version 1.0
+ */
 data class Cell(val row: Short, val col: Char): JLayeredPane() {
+    /** Initializes cell dimensions and UI properties */
     init {
         this.layout = null;
         this.minimumSize = Dimension(16, 16)
@@ -108,6 +168,14 @@ data class Cell(val row: Short, val col: Char): JLayeredPane() {
     }
 }
 
+/**
+ * Highlights a cell with a yellow semi-transparent button and attaches a click listener.
+ * Used to indicate valid move targets.
+ *
+ * @receiver The cell to highlight
+ * @param op The operation to perform when the highlighted cell is clicked
+ * @see Cell
+ */
 fun Cell.highlight(op: () -> Unit) {
     val button = JButton()
     button.size = this.preferredSize
@@ -130,6 +198,14 @@ fun Cell.highlight(op: () -> Unit) {
     repaint()
 }
 
+/**
+ * Removes the highlight from a cell by removing all components in the MODAL_LAYER.
+ * Refreshes the cell's display to show the underlying piece or board color.
+ *
+ * @receiver The cell to remove highlight from
+ * @see Cell
+ * @see highlight
+ */
 fun Cell.deHighlight() {
 //    System.out.println("De-highlighting cell $col$row")
     for (layer in getComponentsInLayer(JLayeredPane.MODAL_LAYER)) {

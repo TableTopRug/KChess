@@ -6,9 +6,20 @@ import java.awt.*
 import java.awt.Image.SCALE_SMOOTH
 import javax.swing.*
 
-
+/**
+ * Chess-specific UI manager for displaying game information.
+ * Extends GameUIManager to add chess-specific features like captured pieces display.
+ *
+ * @property game The chess game instance
+ * @property movesPanel The panel for displaying move history
+ * @property capturedPanel The panel for displaying captured pieces
+ * @property capturePanels Map of color to their captured pieces panel
+ * @author Your Name
+ * @version 1.0
+ */
 class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel, private val capturedPanel: JPanel):
         GameUIManager(game, movesPanel, capturedPanel) {
+    /** Map of player color to the panel displaying their captured pieces */
     val capturePanels = mutableMapOf<COLOR, JPanel>()
 
     init {
@@ -39,6 +50,10 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
         movesPanel.add(scrollPane, BorderLayout.CENTER)
     }
 
+    /**
+     * Updates the displayed move history and captured pieces.
+     * Refreshes both the move list and the captured pieces panels.
+     */
     override fun updateMoves() {
         movesListModel.clear()
         val moves = game.getFormattedMoveHistory()
@@ -70,6 +85,13 @@ class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel
         movesList.ensureIndexIsVisible(movesListModel.size() - 1)
     }
 
+    /**
+     * Displays a dialog for the player to choose a piece for pawn promotion.
+     * Shows Queen, Rook, Bishop, and Knight options with their images.
+     *
+     * @param color The color of the pawn being promoted
+     * @return The selected ChessPieceType, or null if dialog was cancelled
+     */
     fun doGetPromotionChoice(color: COLOR): ChessPieceType? {
         val options = arrayOf(
             ImageIcon(ChessPiece(ChessPieceType.QUEEN, color).image().getScaledInstance(64, 64, Image.SCALE_SMOOTH), "Queen"),

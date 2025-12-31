@@ -8,6 +8,19 @@ import Move
 import Piece
 import Player
 
+/**
+ * Chess-specific move representation.
+ * Extends Move to include chess-specific properties like promotion and check status.
+ *
+ * @property from The source cell
+ * @property to The destination cell
+ * @property piece The chess piece that was moved
+ * @property capturedPiece The piece captured by this move (if any)
+ * @property promotion The piece type the pawn was promoted to (if applicable)
+ * @property isPutInCheck Whether this move puts the opponent in check
+ * @author Your Name
+ * @version 1.0
+ */
 data class ChessMove(
     override val from: Cell,
     override val to: Cell,
@@ -20,6 +33,17 @@ data class ChessMove(
     }
 }
 
+/**
+ * Represents the state of a chess game after a hypothetical move.
+ * Used for move validation and AI decision-making.
+ *
+ * @property board The board state after the simulated move
+ * @property wouldBeInCheck Whether the moving player would be in check
+ * @property capturedPiece The piece that would be captured (if any)
+ * @property isCheckingOpponent Whether the move would put the opponent in check
+ * @author Your Name
+ * @version 1.0
+ */
 data class SimulatedChessGameState(
     val board: HashMap<Cell, Piece?>,
     val wouldBeInCheck: Boolean,
@@ -27,6 +51,17 @@ data class SimulatedChessGameState(
     val isCheckingOpponent: Boolean
 )
 
+/**
+ * Main Chess game implementation.
+ * Manages chess-specific rules, turn management, check/checkmate detection, and pawn promotion.
+ *
+ * @property players List of chess players
+ * @property board The chess board instance
+ * @property moveHistory Complete history of all moves made
+ * @property currentTurn The color of the player whose turn it is
+ * @author Your Name
+ * @version 1.0
+ */
 class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLACK)) {
     override val board: ChessBoard = ChessBoard()
 
@@ -44,6 +79,12 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
     }
 
 
+    /**
+     * Gets the move history in standard chess notation.
+     * Format: "1. e2e4 c7c5 2. g1f3..."
+     *
+     * @return List of formatted move strings
+     */
     override fun getFormattedMoveHistory(): List<String> {
         return moveHistory.mapIndexed { index, move ->
             val moveNum = (index / 2) + 1
@@ -68,6 +109,11 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         }
     }
 
+    /**
+     * Gets a human-readable description of the last move made.
+     *
+     * @return String describing the last move or game start message
+     */
     override fun getLastMoveDescription(): String {
         if (moveHistory.isEmpty()) return "Game started"
 
@@ -80,6 +126,11 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         return "$color $piece from ${lastMove.from.col}${lastMove.from.row} to ${lastMove.to.col}${lastMove.to.row}$capture$promotion"
     }
 
+    /**
+     * Gets the current complete game state.
+     *
+     * @return GameState object with board, current turn, and move history
+     */
     override fun getGameState(): GameState {
         return GameState(
             board = board.getBoardState(),
@@ -88,10 +139,25 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         )
     }
 
+    /**
+     * Gets all pieces owned by a player.
+     *
+     * @param player The player to get pieces for
+     * @return List of pieces owned by the player
+     */
     override fun getPiecesForPlayer(player: Player): List<Piece> {
         return board.pieces.keys.filter { p -> p.color == player.color }
     }
 
+    /**
+     * Validates if a move is legal for the given player.
+     * Checks turn order, piece ownership, and game rules (no moving into check).
+     *
+     * @param from The source cell
+     * @param to The destination cell
+     * @param player The player attempting the move
+     * @return True if the move is valid, false otherwise
+     */
     override fun isValidMove(from: Cell, to: Cell, player: Player): Boolean {
         if (player.color != currentTurn) return false
 
@@ -102,6 +168,15 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         return validMoves.contains(to)
     }
 
+    /**
+     * Executes a move if it is valid.
+     * Handles piece movement, capture, check/checkmate detection, and turn switching.
+     *
+     * @param from The source cell
+     * @param to The destination cell
+     * @param player The player making the move
+     * @return True if the move was executed, false if it was invalid
+     */
     override fun makeMove(from: Cell, to: Cell, player: Player): Boolean {
         if (!isValidMove(from, to, player)) return false
 
@@ -149,12 +224,28 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         return true
     }
 
+    /**
+     * Gets the current player's turn.
+     *
+     * @return The color of the player whose turn it is
+     */
     fun getCurrentTurn(): COLOR = currentTurn
 
+    /**
+     * Registers a listener to be called when a move is completed.
+     *
+     * @param listener The callback function to invoke
+     */
     fun addMoveListener(listener: () -> Unit) {
         moveListeners.add(listener)
     }
 
+    /**
+     * Checks if the king of the specified color is currently in check.
+     *
+     * @param color The color of the king to check
+     * @return True if the king is in check, false otherwise
+     */
     fun isKingInCheck(color: COLOR): Boolean {
         val kingCell = board.getBoardState().entries.find {
             it.value is ChessPiece &&
@@ -174,6 +265,12 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         return false
     }
 
+    /**
+     * Checks if a pawn has reached the end of the board and is eligible for promotion.
+     *
+     * @param cell The cell to check
+     * @return True if a pawn on the cell can be promoted, false otherwise
+     */
     fun isPawnAtEndOfBoard(cell: Cell): Boolean {
         val piece = board.getBoardState()[cell] as? ChessPiece ?: return false
         if (piece.pieceType != ChessPieceType.PAWN) return false
@@ -182,6 +279,13 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
                (piece.color == COLOR.BLACK && cell.row.toInt() == 1)
     }
 
+    /**
+     * Promotes a pawn at the given cell to a new piece type.
+     * Displays a dialog for the player to choose the promotion piece.
+     *
+     * @param cell The cell containing the pawn to promote
+     * @return The new promoted piece
+     */
     fun promotePawn(cell: Cell): ChessPiece {
         val piece = board.getBoardState()[cell] as? ChessPiece ?: throw IllegalArgumentException("No pawn at given cell")
         if (piece.pieceType != ChessPieceType.PAWN) throw IllegalArgumentException("Piece at given cell is not a pawn")
@@ -204,8 +308,11 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
     }
 
     /**
-     * Gets all cells that a piece at the given position can capture
-     * (includes empty squares for non-pawn pieces, only occupied for pawns)
+     * Gets all cells that a piece at the given position can capture.
+     * Includes only occupied squares with opponent pieces.
+     *
+     * @param fromCell The cell the piece is on
+     * @return List of cells containing capturable opponent pieces
      */
     fun getAllPotentialCaptures(fromCell: Cell): List<Cell> {
         val piece = board.getBoardState()[fromCell] ?: return emptyList()
@@ -216,13 +323,24 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
     }
 
     /**
-     * Gets all legal moves for a piece (including non-captures)
+     * Gets all legal moves for a piece at the given position.
+     * Includes both captures and non-capture moves.
+     *
+     * @param fromCell The cell the piece is on
+     * @return List of all legal destination cells
      */
     fun getAllLegalMoves(fromCell: Cell): List<Cell> {
         val piece = board.getBoardState()[fromCell] ?: return emptyList()
         return board.getPieceMovementOptions(fromCell, piece)
     }
 
+    /**
+     * Checks if the player with the given color is in checkmate.
+     * A player is in checkmate if they are in check and have no legal moves to escape.
+     *
+     * @param color The color of the player to check
+     * @return True if the player is in checkmate, false otherwise
+     */
     fun isCheckmate(color: COLOR): Boolean {
         if (!isKingInCheck(color)) return false
 
@@ -251,6 +369,12 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
         return true
     }
 
+    /**
+     * Registers the UI manager for this game.
+     * Used for displaying pawn promotion dialogs.
+     *
+     * @param uiManager The ChessGameUIManager to use
+     */
     fun subscribeAsUIManager(uiManager: ChessGameUIManager) {
         this.uiManager = uiManager;
     }

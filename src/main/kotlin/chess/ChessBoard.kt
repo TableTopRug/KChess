@@ -15,8 +15,17 @@ import javax.swing.ImageIcon
 import javax.swing.JLabel
 import javax.swing.JLayeredPane
 
-
+/**
+ * Chess-specific implementation of the Board class.
+ * Manages the 8x8 chess board and enforces chess-specific rules.
+ *
+ * @property size The size of the board (always 8 for chess)
+ * @property game Optional reference to the Chess game instance
+ * @author Your Name
+ * @version 1.0
+ */
 class ChessBoard(size: Short = 8): Board(size) {
+    /** Reference to the game for turn management and move validation */
     var game: Chess? = null
 
 
@@ -104,6 +113,14 @@ class ChessBoard(size: Short = 8): Board(size) {
         }
     }
 
+    /**
+     * Handles click events on chess pieces.
+     * Shows valid moves when a piece is clicked (if it's the player's turn).
+     * Enforces turn-based gameplay.
+     *
+     * @param cell The cell containing the piece
+     * @param piece The chess piece that was clicked
+     */
     override fun addPieceOnClick(cell: Cell, piece: Piece) {
         var iLab = JLabel(ImageIcon(piece.image().getScaledInstance(cell.preferredSize.width, cell.preferredSize.height, Image.SCALE_SMOOTH)))
 
@@ -127,6 +144,14 @@ class ChessBoard(size: Short = 8): Board(size) {
         cell.add(iLab, JLayeredPane.PALETTE_LAYER)
     }
 
+    /**
+     * Executes a chess move and handles special chess rules.
+     * Checks for pawn promotion and updates the piece map.
+     *
+     * @param from The source cell
+     * @param to The destination cell
+     * @return A ChessMove object containing all move details
+     */
     override fun doPieceMove(from: Cell, to: Cell): ChessMove {
         var move = super.doPieceMove(from, to)
         var chessMove = ChessMove(move)
