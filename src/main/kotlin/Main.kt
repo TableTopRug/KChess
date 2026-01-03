@@ -1,5 +1,5 @@
-import ui.GameScreen
-import ui.ScreenManager
+import ui.GameScene
+import ui.SceneManager
 import java.awt.*
 import javax.swing.*
 
@@ -28,15 +28,15 @@ fun main(args: Array<String>) {
  * Creates and returns the main menu panel.
  * (Currently not fully implemented)
  *
- * @param screenManager The screen manager for handling navigation
+ * @param sceneManager The screen manager for handling navigation
  * @return JPanel for the main menu
  */
-fun createMainMenu(screenManager: ScreenManager): JPanel {
+fun createMainMenu(sceneManager: SceneManager): JPanel {
     val panel = JPanel()
     val startButton = JButton("Start Game")
 
     startButton.addActionListener {
-        screenManager.switchTo(GameScreen.IN_GAME)
+        sceneManager.switchTo(GameScene.IN_GAME)
     }
     panel.add(startButton)
 

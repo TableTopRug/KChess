@@ -18,22 +18,65 @@ import javax.swing.*
  * @author TableTopRug
  * @version 1.0
  */
-open class GameUIManager(private val game: Game, private val movesPanel: JPanel, private val infoPanel: JPanel) {
+abstract class UIManager(open val frame: JFrame) {
+    protected val leftPanel: JPanel = JPanel()
+    protected val centerPanel: JPanel = JPanel()
+    protected val rightPanel: JPanel = JPanel()
+
+    protected var leftPanelVisible: Boolean = false
+    protected var rightPanelVisible: Boolean = false
+
     /** Data model for the move history list */
     internal val movesListModel = DefaultListModel<String>()
     /** JList component that displays move history */
     internal val movesList = JList(movesListModel)
-
-
-    /** Left panel for displaying game information */
-    val lpanel = JPanel()
-    /** Center panel for displaying the game board */
-    val mpanel = JPanel()
-    /** Right panel for displaying additional game information */
-    val rpanel = JPanel()
+    internal val movesPanel: JPanel = rightPanel
+    internal val infoPanel: JPanel = leftPanel
+    internal val gamePanel: JPanel = centerPanel
 
 
     init {
+        initializeLayout()
+        configurePanels()
+    }
+
+    /**
+     * Updates the displayed move history from the game.
+     * Retrieves formatted moves and displays them in pairs (White, Black).
+     * Auto-scrolls to the most recent move.
+     */
+    abstract fun updateMoves()
+
+    /**
+     * Initializes the main UI layout with three-panel border layout.
+     * Sets up the frame and panel configuration for the application.
+     */
+    open fun initializeLayout() {
+        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        frame.minimumSize = Dimension(800, 600)
+        frame.setLocationRelativeTo(null);
+        frame.layout = BorderLayout()
+
+        // Set fixed sizes for side panels
+        leftPanel.preferredSize = Dimension(200, 600)
+        leftPanel.minimumSize = Dimension(50, 125)
+        leftPanel.maximumSize = Dimension(400, 1200)
+
+        rightPanel.preferredSize = Dimension(200, 600)
+        rightPanel.minimumSize = Dimension(50, 125)
+        rightPanel.maximumSize = Dimension(400, 1200)
+
+        //debug colors
+        leftPanel.background = Color.RED
+        centerPanel.background = Color.GREEN
+        rightPanel.background = Color.BLUE
+
+        frame.add(leftPanel, BorderLayout.WEST)
+        frame.add(centerPanel, BorderLayout.CENTER)
+        frame.add(rightPanel, BorderLayout.EAST)
+    }
+
+    open fun configurePanels() {
         movesPanel.layout = BorderLayout()
         movesPanel.minimumSize = Dimension(128, 256)
         movesPanel.add(JLabel("Move History"), BorderLayout.NORTH)
@@ -42,40 +85,140 @@ open class GameUIManager(private val game: Game, private val movesPanel: JPanel,
         movesPanel.add(scrollPane, BorderLayout.CENTER)
     }
 
-    /**
-     * Initializes the main UI layout with three-panel border layout.
-     * Sets up the frame and panel configuration for the application.
-     */
-    fun initUI() {
-        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        frame.minimumSize = Dimension(800, 600)
-        frame.setLocationRelativeTo(null);
-        frame.layout = BorderLayout()
-
-        // Set fixed sizes for side panels
-        lpanel.preferredSize = Dimension(200, 600)
-        lpanel.minimumSize = Dimension(50, 125)
-        lpanel.maximumSize = Dimension(400, 1200)
-
-        rpanel.preferredSize = Dimension(200, 600)
-        rpanel.minimumSize = Dimension(50, 125)
-        rpanel.maximumSize = Dimension(400, 1200)
-
-        lpanel.background = Color.RED
-        mpanel.background = Color.GREEN
-        rpanel.background = Color.BLUE
-
-        frame.add(lpanel, BorderLayout.WEST)
-        frame.add(mpanel, BorderLayout.CENTER)
-        frame.add(rpanel, BorderLayout.EAST)
+    fun showSidePanels() {
+        if (!leftPanelVisible) {
+            frame.add(leftPanel, BorderLayout.WEST)
+            leftPanelVisible = true
+        }
+        if (!rightPanelVisible) {
+            frame.add(rightPanel, BorderLayout.EAST)
+            rightPanelVisible = true
+        }
+        frame.revalidate()
+        frame.repaint()
     }
 
-    /**
-     * Updates the displayed move history from the game.
-     * Retrieves formatted moves and displays them in pairs (White, Black).
-     * Auto-scrolls to the most recent move.
-     */
-    open fun updateMoves() {
+    fun hideSidePanels() {
+        if (leftPanelVisible) {
+            frame.remove(leftPanel)
+            leftPanelVisible = false
+        }
+        if (rightPanelVisible) {
+            frame.remove(rightPanel)
+            rightPanelVisible = false
+        }
+        frame.revalidate()
+        frame.repaint()
+    }
+
+    fun showLeftPanel() {
+        if (!leftPanelVisible) {
+            frame.add(leftPanel, BorderLayout.WEST)
+            leftPanelVisible = true
+            frame.revalidate()
+            frame.repaint()
+        }
+    }
+
+    fun setLeftPanelContent(content: JPanel) {
+        leftPanel.removeAll()
+        leftPanel.add(content, BorderLayout.CENTER)
+        leftPanel.revalidate()
+        leftPanel.repaint()
+    }
+
+    fun clearLeftPanel() {
+        leftPanel.removeAll()
+        leftPanel.revalidate()
+        leftPanel.repaint()
+    }
+
+    fun hideLeftPanel() {
+        if (leftPanelVisible) {
+            frame.remove(leftPanel)
+            leftPanelVisible = false
+            frame.revalidate()
+            frame.repaint()
+        }
+    }
+
+    fun showRightPanel() {
+        if (!rightPanelVisible) {
+            frame.add(rightPanel, BorderLayout.EAST)
+            rightPanelVisible = true
+            frame.revalidate()
+            frame.repaint()
+        }
+    }
+
+    fun setRightPanelContent(content: JPanel) {
+        rightPanel.removeAll()
+        rightPanel.add(content, BorderLayout.CENTER)
+        rightPanel.revalidate()
+        rightPanel.repaint()
+    }
+
+    fun clearRightPanel() {
+        rightPanel.removeAll()
+        rightPanel.revalidate()
+        rightPanel.repaint()
+    }
+
+    fun hideRightPanel() {
+        if (rightPanelVisible) {
+            frame.remove(rightPanel)
+            rightPanelVisible = false
+            frame.revalidate()
+            frame.repaint()
+        }
+    }
+
+    fun showMovesPanel() {
+        showRightPanel()
+    }
+
+    fun hideMovesPanel() {
+        hideRightPanel()
+    }
+
+    fun showInfoPanel() {
+        showLeftPanel()
+    }
+
+    fun hideInfoPanel() {
+        hideLeftPanel()
+    }
+
+    fun setCenterContent(content: JPanel) {
+        centerPanel.removeAll()
+        centerPanel.add(content, BorderLayout.CENTER)
+        centerPanel.revalidate()
+        centerPanel.repaint()
+    }
+
+    fun clearCenter() {
+        centerPanel.removeAll()
+        centerPanel.revalidate()
+        centerPanel.repaint()
+    }
+}
+
+open class GameUIManager(override val frame: JFrame): UIManager(frame) {
+    lateinit var game: Game
+    lateinit var sceneManager: SceneManager
+
+
+    constructor(frame: JFrame, game: Game) : this(frame) {
+        this.game = game
+    }
+
+    constructor(frame: JFrame, game: Game, sceneManager: SceneManager) : this(frame) {
+        this.game = game
+        this.sceneManager = sceneManager
+    }
+
+
+    override fun updateMoves() {
         movesListModel.clear()
         val moves = game.getFormattedMoveHistory()
 
@@ -89,4 +232,33 @@ open class GameUIManager(private val game: Game, private val movesPanel: JPanel,
         // Auto-scroll to bottom
         movesList.ensureIndexIsVisible(movesListModel.size() - 1)
     }
+
+    fun createMainMenuScreen(): Array<JPanel?> {
+        val panel = JPanel()
+        panel.layout = BorderLayout()
+        panel.add(JLabel("Main Menu - To be implemented"), BorderLayout.CENTER)
+
+        return arrayOf(null, panel, null)
+    }
+
+    fun createGameSelectScreen(): Array<JPanel?> {
+        val panel = JPanel()
+        panel.layout = BorderLayout()
+        panel.add(JLabel("Game Select - To be implemented"), BorderLayout.CENTER)
+
+        return arrayOf(null, panel, null)
+    }
+
+    fun createPlayerTypeSelectScreen(): Array<JPanel?> {
+        val panel = JPanel()
+        panel.layout = BorderLayout()
+        panel.add(JLabel("Player Type Select - To be implemented"), BorderLayout.CENTER)
+
+        val infoPanel = JPanel()
+        infoPanel.layout = BorderLayout()
+        infoPanel.add(JLabel("Select Player Types - To be implemented"), BorderLayout.CENTER)
+
+        return arrayOf(null, panel, infoPanel)
+    }
+
 }

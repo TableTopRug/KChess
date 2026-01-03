@@ -4,6 +4,7 @@ import game.COLOR
 import piece.ChessPiece
 import piece.ChessPieceType
 import game.Chess
+import ui.GameScene
 import ui.GameUIManager
 import java.awt.*
 import java.awt.Image.SCALE_SMOOTH
@@ -20,8 +21,8 @@ import javax.swing.*
  * @author TableTopRug
  * @version 1.0
  */
-class ChessUIManager(val frame: JFrame, val game: Chess, val screenManager: ChessScreenManager, private val movesPanel: JPanel, private val capturedPanel: JPanel):
-        GameUIManager(game, movesPanel, capturedPanel) {
+class ChessUIManager(override val frame: JFrame, override val game: Chess):
+        GameUIManager(frame, game) {
     /** Map of player color to the panel displaying their captured pieces */
     val capturePanels = mutableMapOf<COLOR, JPanel>()
 
@@ -49,8 +50,7 @@ class ChessUIManager(val frame: JFrame, val game: Chess, val screenManager: Ches
             frame.add(rightPanel, BorderLayout.EAST)
 
             // Create managers
-            val screenManager = ChessScreenManager(frame)
-            val gameUI = ChessUIManager(frame, game, screenManager, leftPanel, rightPanel)
+            val gameUI = ChessUIManager(frame, game)
 
             // Setup game
             game.board.game = game
@@ -69,6 +69,11 @@ class ChessUIManager(val frame: JFrame, val game: Chess, val screenManager: Ches
     }
 
     init {
+        this.sceneManager = ChessSceneManager(frame)
+
+        var gameScreenList: Array<JPanel?> = arrayOf(null, null, null)
+
+        var capturedPanel = JPanel()
         capturedPanel.layout = BoxLayout(capturedPanel, BoxLayout.Y_AXIS)
         capturedPanel.minimumSize = Dimension(128, 256)
 
@@ -90,10 +95,18 @@ class ChessUIManager(val frame: JFrame, val game: Chess, val screenManager: Ches
             capturePanels[color] = pPanel
         }
 
+        var moveListPanel = JPanel()
+
         movesList.font = Font("Monospaced", Font.ROMAN_BASELINE, 14)
 
         val scrollPane = JScrollPane(movesList)
-        movesPanel.add(scrollPane, BorderLayout.CENTER)
+        moveListPanel.add(scrollPane, BorderLayout.CENTER)
+
+        gameScreenList[0] = capturedPanel
+        gameScreenList[1] = game.board
+        gameScreenList[2] = moveListPanel
+
+        this.sceneManager.registerScene(GameScene.IN_GAME, gameScreenList)
     }
 
     /**
