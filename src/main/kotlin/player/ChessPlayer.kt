@@ -1,10 +1,10 @@
-package chess
+package player
 
-import COLOR
-import Cell
-import Game
-import Piece
-import Player
+import game.COLOR
+import board.Cell
+import game.Game
+import game.Chess
+import game.SimulatedChessGameState
 
 /**
  * Base class for all chess players (human and AI).

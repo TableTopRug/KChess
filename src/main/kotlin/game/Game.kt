@@ -1,4 +1,9 @@
-import javax.swing.JPanel
+package game
+
+import piece.Piece
+import player.Player
+import board.Board
+import board.Cell
 
 /**
  * Enumeration representing player colors in the game.
@@ -11,6 +16,13 @@ import javax.swing.JPanel
 enum class COLOR {
     BLACK,
     WHITE
+}
+
+enum class GameType {
+    CHESS,
+    CHECKERS,
+    OTHELLO,
+    CUSTOM
 }
 
 /**

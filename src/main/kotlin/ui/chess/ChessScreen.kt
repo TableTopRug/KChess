@@ -1,8 +1,8 @@
-package chess
+package ui.chess
 
-import COLOR
-import GameScreen
-import ScreenManager
+import game.COLOR
+import ui.GameScreen
+import ui.ScreenManager
 import java.awt.*
 import javax.swing.*
 
@@ -18,12 +18,7 @@ import javax.swing.*
  */
 class ChessScreenManager(val frame: JFrame): ScreenManager(frame) {
     /** The game over screen panel */
-    val gameOverScreen: JPanel
-
-    /** Flag indicating if the game over screen has been prepared with a winner */
-    var isGameOverPrepared: Boolean = false
-
-    private var gbc = GridBagConstraints()
+    override val gameOverScreen: JPanel
 
 
     init {

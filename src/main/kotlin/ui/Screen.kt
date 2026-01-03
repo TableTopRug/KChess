@@ -1,5 +1,7 @@
+package ui
+
+import java.awt.GridBagConstraints
 import javax.swing.JFrame
-import javax.swing.JLayeredPane
 import javax.swing.JPanel
 
 /**
@@ -31,10 +33,20 @@ enum class GameScreen {
  * @author TableTopRug
  * @version 1.0
  */
-open class ScreenManager(private val frame: JFrame) {
+abstract class ScreenManager(private val frame: JFrame) {
+    /** The game over screen panel */
+    abstract val gameOverScreen: JPanel
+
     private var currentScreen: GameScreen = GameScreen.MAIN_MENU
+
     //    private val root = frame.contentPane as JLayeredPane
     private val screens: MutableMap<GameScreen, JPanel> = mutableMapOf()
+
+    internal var gbc = GridBagConstraints()
+
+    /** Flag indicating if the game over screen has been prepared with a winner */
+    var isGameOverPrepared: Boolean = false
+
 
     /**
      * Prepares a screen before displaying it.
@@ -43,9 +55,7 @@ open class ScreenManager(private val frame: JFrame) {
      * @param screenType The type of screen to prepare
      * @param args Optional arguments for screen initialization
      */
-    open fun prepareScreen(screenType: GameScreen, vararg args: Any?) {
-        // Override in subclasses if needed
-    }
+    abstract fun prepareScreen(screenType: GameScreen, vararg args: Any?)
 
     /**
      * Registers a screen panel with the manager.

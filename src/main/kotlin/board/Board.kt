@@ -1,9 +1,12 @@
+package board
+
+import game.Game
+import game.Move
+import piece.Piece
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
 import java.awt.Image
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.*
 
 /**

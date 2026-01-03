@@ -1,9 +1,7 @@
-package chess
+package piece
 
-import COLOR
-import Cell
-import Piece
-import PieceType
+import game.COLOR
+import board.Cell
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import kotlin.math.abs

@@ -1,7 +1,10 @@
-package chess
+package ui.chess
 
-import COLOR
-import GameUIManager
+import game.COLOR
+import piece.ChessPiece
+import piece.ChessPieceType
+import game.Chess
+import ui.GameUIManager
 import java.awt.*
 import java.awt.Image.SCALE_SMOOTH
 import javax.swing.*
@@ -17,10 +20,53 @@ import javax.swing.*
  * @author TableTopRug
  * @version 1.0
  */
-class ChessGameUIManager(private val game: Chess, private val movesPanel: JPanel, private val capturedPanel: JPanel):
+class ChessUIManager(val frame: JFrame, val game: Chess, val screenManager: ChessScreenManager, private val movesPanel: JPanel, private val capturedPanel: JPanel):
         GameUIManager(game, movesPanel, capturedPanel) {
     /** Map of player color to the panel displaying their captured pieces */
     val capturePanels = mutableMapOf<COLOR, JPanel>()
+
+
+    companion object {
+        fun create(frame: JFrame, game: Chess): ChessUIManager {
+            // Setup all UI panels
+            val leftPanel = JPanel().apply {
+                preferredSize = Dimension(200, 600)
+                background = Color.RED
+            }
+
+            val rightPanel = JPanel().apply {
+                preferredSize = Dimension(200, 600)
+                background = Color.BLUE
+            }
+
+            val centerPanel = JPanel().apply {
+                background = Color.GREEN
+            }
+
+            // Add panels to frame
+            frame.add(leftPanel, BorderLayout.WEST)
+            frame.add(centerPanel, BorderLayout.CENTER)
+            frame.add(rightPanel, BorderLayout.EAST)
+
+            // Create managers
+            val screenManager = ChessScreenManager(frame)
+            val gameUI = ChessUIManager(frame, game, screenManager, leftPanel, rightPanel)
+
+            // Setup game
+            game.board.game = game
+            centerPanel.add(game.board)
+            game.subscribeAsUIManager(gameUI)
+
+            // Add listeners
+            game.addMoveListener {
+                SwingUtilities.invokeLater {
+                    gameUI.updateMoves()
+                }
+            }
+
+            return gameUI
+        }
+    }
 
     init {
         capturedPanel.layout = BoxLayout(capturedPanel, BoxLayout.Y_AXIS)

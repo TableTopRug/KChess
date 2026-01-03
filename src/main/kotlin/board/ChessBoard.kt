@@ -1,9 +1,12 @@
-package chess
+package board
 
-import Board
-import COLOR
-import Cell
-import Piece
+import game.COLOR
+import piece.Piece
+import piece.ChessPiece
+import piece.ChessPieceType
+import player.HumanChessPlayer
+import game.Chess
+import game.ChessMove
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
@@ -93,9 +96,9 @@ class ChessBoard(size: Short = 8): Board(size) {
                     board[Cell(y, 'c')] = ChessPiece(ChessPieceType.BISHOP, COLOR.BLACK)
                     pieces[board[Cell(y, 'c')]!!] = Cell(y, 'c')
                     board[Cell(y, 'd')] = ChessPiece(ChessPieceType.QUEEN, COLOR.BLACK)
-                    pieces[board[Cell(y, 'e')]!!] = Cell(y, 'd')
+                    pieces[board[Cell(y, 'd')]!!] = Cell(y, 'd')
                     board[Cell(y, 'e')] = ChessPiece(ChessPieceType.KING, COLOR.BLACK)
-                    pieces[board[Cell(y, 'd')]!!] = Cell(y, 'e')
+                    pieces[board[Cell(y, 'e')]!!] = Cell(y, 'e')
                     board[Cell(y, 'f')] = ChessPiece(ChessPieceType.BISHOP, COLOR.BLACK)
                     pieces[board[Cell(y, 'f')]!!] = Cell(y, 'f')
                     board[Cell(y, 'g')] = ChessPiece(ChessPieceType.KNIGHT, COLOR.BLACK)

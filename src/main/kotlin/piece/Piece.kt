@@ -1,6 +1,8 @@
+package piece
+
+import board.Cell
+import game.COLOR
 import java.awt.image.BufferedImage
-import javax.imageio.ImageIO
-import kotlin.math.abs
 
 /**
  * Interface defining the movement and validation behavior for different piece types.

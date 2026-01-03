@@ -1,12 +1,12 @@
-package chess
+package game
 
-import COLOR
-import Cell
-import Game
-import GameState
-import Move
-import Piece
-import Player
+import board.Cell
+import piece.Piece
+import player.Player
+import board.ChessBoard
+import ui.chess.ChessUIManager
+import piece.ChessPiece
+import piece.ChessPieceType
 
 /**
  * Chess-specific move representation.
@@ -68,7 +68,7 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
     private val moveListeners = mutableListOf<() -> Unit>()
 
     private var currentTurn: COLOR = COLOR.WHITE
-    private var uiManager: ChessGameUIManager? = null
+    private var uiManager: ChessUIManager? = null
 
     val moveHistory: MutableList<ChessMove> = mutableListOf()
 
@@ -375,7 +375,7 @@ class Chess(players: List<Player>) : Game(players, listOf(COLOR.WHITE, COLOR.BLA
      *
      * @param uiManager The ChessGameUIManager to use
      */
-    fun subscribeAsUIManager(uiManager: ChessGameUIManager) {
+    fun subscribeAsUIManager(uiManager: ChessUIManager) {
         this.uiManager = uiManager;
     }
 

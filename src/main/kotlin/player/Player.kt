@@ -1,3 +1,11 @@
+package player
+
+import board.Cell
+import game.COLOR
+import game.Game
+import game.Move
+import piece.Piece
+
 /**
  * Abstract base class for all players in a game.
  * Provides common functionality for human and AI players.
