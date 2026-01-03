@@ -55,7 +55,16 @@ abstract class ScreenManager(private val frame: JFrame) {
      * @param screenType The type of screen to prepare
      * @param args Optional arguments for screen initialization
      */
-    abstract fun prepareScreen(screenType: GameScreen, vararg args: Any?)
+    open fun prepareScreen(screenType: GameScreen, vararg args: Any?) {
+        when (screenType) {
+            GameScreen.GAME_OVER -> {
+                throw NotImplementedError("prepareScreen for GAME_OVER must be implemented in subclass.")
+            }
+            else -> {
+                // Default implementation does nothing
+            }
+        }
+    }
 
     /**
      * Registers a screen panel with the manager.
