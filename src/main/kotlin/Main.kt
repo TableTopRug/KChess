@@ -3,13 +3,13 @@ import ui.SceneManager
 import java.awt.*
 import javax.swing.*
 
-
-
 /**
- * Entry point for the Chess application.
- * Initializes the game, UI, and starts the game loop.
+ * Main entry point for the KChess application.
+ * Initializes the game engine, UI, and starts the application.
  *
  * @param args Command line arguments (not used)
+ * @author TableTopRug
+ * @version 1.0
  */
 fun main(args: Array<String>) {
     val app = GameApplication()
@@ -26,10 +26,13 @@ fun main(args: Array<String>) {
 
 /**
  * Creates and returns the main menu panel.
- * (Currently not fully implemented)
+ * Displays a start button that transitions to game selection.
+ * (Currently not fully implemented with all menu options)
  *
- * @param sceneManager The screen manager for handling navigation
- * @return JPanel for the main menu
+ * @param sceneManager The scene manager for handling screen navigation
+ * @return JPanel configured for the main menu display
+ * @author TableTopRug
+ * @version 1.0
  */
 fun createMainMenu(sceneManager: SceneManager): JPanel {
     val panel = JPanel()

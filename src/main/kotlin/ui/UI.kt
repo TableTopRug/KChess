@@ -85,6 +85,10 @@ abstract class UIManager(open val frame: JFrame) {
         movesPanel.add(scrollPane, BorderLayout.CENTER)
     }
 
+    /**
+     * Displays both side panels (left and right) on the UI.
+     * Makes side panels visible if they were previously hidden.
+     */
     fun showSidePanels() {
         if (!leftPanelVisible) {
             frame.add(leftPanel, BorderLayout.WEST)
@@ -98,6 +102,10 @@ abstract class UIManager(open val frame: JFrame) {
         frame.repaint()
     }
 
+    /**
+     * Hides both side panels (left and right) from the UI.
+     * Removes side panels from view to maximize center panel space.
+     */
     fun hideSidePanels() {
         if (leftPanelVisible) {
             frame.remove(leftPanel)
@@ -111,6 +119,10 @@ abstract class UIManager(open val frame: JFrame) {
         frame.repaint()
     }
 
+    /**
+     * Displays the left side panel (typically for game information).
+     * Makes the left panel visible if it was previously hidden.
+     */
     fun showLeftPanel() {
         if (!leftPanelVisible) {
             frame.add(leftPanel, BorderLayout.WEST)
@@ -120,6 +132,12 @@ abstract class UIManager(open val frame: JFrame) {
         }
     }
 
+    /**
+     * Sets the content of the left panel.
+     * Replaces all existing content with the provided JPanel.
+     *
+     * @param content The JPanel to display in the left panel
+     */
     fun setLeftPanelContent(content: JPanel) {
         leftPanel.removeAll()
         leftPanel.add(content, BorderLayout.CENTER)
@@ -127,12 +145,20 @@ abstract class UIManager(open val frame: JFrame) {
         leftPanel.repaint()
     }
 
+    /**
+     * Clears all content from the left panel.
+     * Removes all child components from the left panel.
+     */
     fun clearLeftPanel() {
         leftPanel.removeAll()
         leftPanel.revalidate()
         leftPanel.repaint()
     }
 
+    /**
+     * Hides the left side panel.
+     * Removes the left panel from view if it is currently visible.
+     */
     fun hideLeftPanel() {
         if (leftPanelVisible) {
             frame.remove(leftPanel)
@@ -142,6 +168,10 @@ abstract class UIManager(open val frame: JFrame) {
         }
     }
 
+    /**
+     * Displays the right side panel (typically for move history).
+     * Makes the right panel visible if it was previously hidden.
+     */
     fun showRightPanel() {
         if (!rightPanelVisible) {
             frame.add(rightPanel, BorderLayout.EAST)
@@ -151,6 +181,12 @@ abstract class UIManager(open val frame: JFrame) {
         }
     }
 
+    /**
+     * Sets the content of the right panel.
+     * Replaces all existing content with the provided JPanel.
+     *
+     * @param content The JPanel to display in the right panel
+     */
     fun setRightPanelContent(content: JPanel) {
         rightPanel.removeAll()
         rightPanel.add(content, BorderLayout.CENTER)
@@ -158,12 +194,20 @@ abstract class UIManager(open val frame: JFrame) {
         rightPanel.repaint()
     }
 
+    /**
+     * Clears all content from the right panel.
+     * Removes all child components from the right panel.
+     */
     fun clearRightPanel() {
         rightPanel.removeAll()
         rightPanel.revalidate()
         rightPanel.repaint()
     }
 
+    /**
+     * Hides the right side panel.
+     * Removes the right panel from view if it is currently visible.
+     */
     fun hideRightPanel() {
         if (rightPanelVisible) {
             frame.remove(rightPanel)
@@ -173,22 +217,45 @@ abstract class UIManager(open val frame: JFrame) {
         }
     }
 
+    /**
+     * Displays the moves panel (convenience method for right panel).
+     * @see showRightPanel
+     */
     fun showMovesPanel() {
         showRightPanel()
     }
 
+    /**
+     * Hides the moves panel (convenience method for right panel).
+     * @see hideRightPanel
+     */
     fun hideMovesPanel() {
         hideRightPanel()
     }
 
+    /**
+     * Displays the info panel (convenience method for left panel).
+     * @see showLeftPanel
+     */
     fun showInfoPanel() {
         showLeftPanel()
     }
 
+    /**
+     * Hides the info panel (convenience method for left panel).
+     * @see hideLeftPanel
+     */
     fun hideInfoPanel() {
         hideLeftPanel()
     }
 
+    /**
+     * Sets the content of the center panel.
+     * Replaces all existing content with the provided JPanel.
+     * The center panel typically displays the main game board.
+     *
+     * @param content The JPanel to display in the center panel
+     */
     fun setCenterContent(content: JPanel) {
         centerPanel.removeAll()
         centerPanel.add(content, BorderLayout.CENTER)
@@ -196,6 +263,10 @@ abstract class UIManager(open val frame: JFrame) {
         centerPanel.repaint()
     }
 
+    /**
+     * Clears all content from the center panel.
+     * Removes all child components from the center panel.
+     */
     fun clearCenter() {
         centerPanel.removeAll()
         centerPanel.revalidate()
@@ -204,7 +275,9 @@ abstract class UIManager(open val frame: JFrame) {
 }
 
 open class GameUIManager(override val frame: JFrame): UIManager(frame) {
+    /** The game instance associated with this UI manager */
     lateinit var game: Game
+    /** The scene manager for screen navigation */
     lateinit var sceneManager: SceneManager
 
 
@@ -217,7 +290,11 @@ open class GameUIManager(override val frame: JFrame): UIManager(frame) {
         this.sceneManager = sceneManager
     }
 
-
+    /**
+     * Updates the displayed move history from the game.
+     * Retrieves formatted moves and displays them in pairs (White move, Black move).
+     * Auto-scrolls to the most recent move in the list.
+     */
     override fun updateMoves() {
         movesListModel.clear()
         val moves = game.getFormattedMoveHistory()
@@ -233,6 +310,12 @@ open class GameUIManager(override val frame: JFrame): UIManager(frame) {
         movesList.ensureIndexIsVisible(movesListModel.size() - 1)
     }
 
+    /**
+     * Creates the main menu screen panel.
+     * Currently a placeholder implementation to be fully developed.
+     *
+     * @return Array of [left panel, center panel, right panel] for the main menu
+     */
     fun createMainMenuScreen(): Array<JPanel?> {
         val panel = JPanel()
         panel.layout = BorderLayout()
@@ -241,6 +324,13 @@ open class GameUIManager(override val frame: JFrame): UIManager(frame) {
         return arrayOf(null, panel, null)
     }
 
+    /**
+     * Creates the game selection screen panel.
+     * Allows players to choose which game type to play (Chess, Checkers, etc.).
+     * Currently a placeholder implementation to be fully developed.
+     *
+     * @return Array of [left panel, center panel, right panel] for game selection
+     */
     fun createGameSelectScreen(): Array<JPanel?> {
         val panel = JPanel()
         panel.layout = BorderLayout()
@@ -249,6 +339,13 @@ open class GameUIManager(override val frame: JFrame): UIManager(frame) {
         return arrayOf(null, panel, null)
     }
 
+    /**
+     * Creates the player type selection screen panel.
+     * Allows selection of human vs AI players before game start.
+     * Currently a placeholder implementation to be fully developed.
+     *
+     * @return Array of [left panel, center panel, right panel] for player selection
+     */
     fun createPlayerTypeSelectScreen(): Array<JPanel?> {
         val panel = JPanel()
         panel.layout = BorderLayout()

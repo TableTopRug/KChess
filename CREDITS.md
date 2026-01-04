@@ -1,39 +1,53 @@
-# Credits
+# KChess Project Credits
 
-## KChess Project
+## Development Team
 
-### Project Lead & Development
-**TableTopRug** - Project creator, core game engine development, chess implementation
+### Core Development
+**TableTopRug** - Project creator, core game engine development, chess implementation, and project architecture
 
-### Technologies & Tools
+## Documentation
 
-- **Language**: Kotlin
-- **Framework**: Swing (Java GUI)
-- **Build System**: Gradle
-- **Documentation Format**: Javadoc / Markdown
+### Documentation Authors
+- **TableTopRug** - Project documentation structure and overview
+- **Claude Haiku 4.5** - Comprehensive Javadoc-style documentation writing and generation
 
-### Acknowledgments
+### Documentation Files
+- **Javadoc Comments** - All source code documented with Javadoc-style comments
+- **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)** - Complete API reference
+- **[docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** - Developer guide with examples
+- **README.md** - Project overview and quick start
 
-#### AI Assistance
-- Claude Haiku 4.5 provided comprehensive documentation writing and generation
-- Claude Sonnet 4.5 provided guidance, refinement, and quality assurance
+## Technology Stack
 
-### License
+- **Language**: Kotlin 1.9+
+- **GUI Framework**: Swing (Java)
+- **Build System**: Gradle 8.0+
+- **Target Runtime**: Java 8+
+- **IDE Support**: IntelliJ IDEA, Android Studio, VS Code (with Kotlin plugins)
 
-This project and its documentation are maintained by TableTopRug.
+## Third-Party Assets
 
-### Contributing
+### Chess Piece Images
+Standard chess piece symbols from font-based rendering system integrated into the build resources.
 
-For contributions to the KChess project, please refer to the documentation in the docs/ folder for guidelines on code style, documentation standards, and the project structure.
+## Project Status
+
+**Current Version**: 1.0 Snapshot  
+**Status**: Active Development  
+**License**: Property of TableTopRug - Not yet open source
+
+## Acknowledgments
+
+This project was developed with attention to clean architecture, comprehensive documentation, and extensibility for future enhancements including additional game types (Checkers, Othello, etc.) and advanced AI implementations.
+
+### AI Assistance
+This project demonstrates the capability of AI-assisted development for:
+- Code documentation and javadoc generation
+- Architecture guidance and refinement
+- Quality assurance and testing recommendations
 
 ---
 
-**Last Updated**: December 30, 2025
+**Last Updated**: January 3, 2026  
 **Documentation Version**: 1.0
-**Project Status**: Active
-
-For more information, see:
-- **00_START_HERE.md** - Quick navigation
-- **QUICK_START.md** - Getting started
-- **DEVELOPER_GUIDE.md** - Development reference
 
