@@ -3,7 +3,6 @@ package ui.chess
 import game.COLOR
 import ui.GameScene
 import ui.SceneManager
-import ui.UIManager
 import java.awt.*
 import javax.swing.*
 

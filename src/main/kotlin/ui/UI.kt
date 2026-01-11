@@ -1,6 +1,8 @@
 package ui
 
+import game.Chess
 import game.Game
+import ui.chess.ChessUIManager
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -274,21 +276,54 @@ abstract class UIManager(open val frame: JFrame) {
     }
 }
 
-open class GameUIManager(override val frame: JFrame): UIManager(frame) {
+open class GameUIManager private constructor(override val frame: JFrame): UIManager(frame) {
     /** The game instance associated with this UI manager */
     lateinit var game: Game
     /** The scene manager for screen navigation */
     lateinit var sceneManager: SceneManager
 
 
-    constructor(frame: JFrame, game: Game) : this(frame) {
-        this.game = game
+    companion object {
+        fun create(frame: JFrame): GameUIManager {
+            // Setup all UI panels
+            val leftPanel = JPanel().apply {
+                preferredSize = Dimension(200, 600)
+                background = Color.RED
+            }
+
+            val rightPanel = JPanel().apply {
+                preferredSize = Dimension(200, 600)
+                background = Color.BLUE
+            }
+
+            val centerPanel = JPanel().apply {
+                background = Color.GREEN
+            }
+
+            // Add panels to frame
+            frame.add(leftPanel, BorderLayout.WEST)
+            frame.add(centerPanel, BorderLayout.CENTER)
+            frame.add(rightPanel, BorderLayout.EAST)
+
+            // Create managers
+            val gameUI = GameUIManager(frame)
+
+            // Setup Game Select Screen
+            game.board.game = game
+            centerPanel.add(game.board)
+            game.subscribeAsUIManager(gameUI)
+
+            // Add listeners
+            game.addMoveListener {
+                SwingUtilities.invokeLater {
+                    gameUI.updateMoves()
+                }
+            }
+
+            return gameUI
+        }
     }
 
-    constructor(frame: JFrame, game: Game, sceneManager: SceneManager) : this(frame) {
-        this.game = game
-        this.sceneManager = sceneManager
-    }
 
     /**
      * Updates the displayed move history from the game.

@@ -21,7 +21,7 @@ import javax.swing.*
  * @author TableTopRug
  * @version 1.0
  */
-class ChessUIManager(override val frame: JFrame, override val game: Chess):
+class ChessUIManager private constructor(override val frame: JFrame, override val game: Chess):
         GameUIManager(frame, game) {
     /** Map of player color to the panel displaying their captured pieces */
     val capturePanels = mutableMapOf<COLOR, JPanel>()
@@ -69,7 +69,7 @@ class ChessUIManager(override val frame: JFrame, override val game: Chess):
     }
 
     init {
-        this.sceneManager = ChessSceneManager(frame)
+        this.sceneManager = ChessSceneManager(this)
 
         var gameScreenList: Array<JPanel?> = arrayOf(null, null, null)
 
